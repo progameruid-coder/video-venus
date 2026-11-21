@@ -372,9 +372,9 @@ export const WorldBoxEp1: React.FC = () => {
     ? 100
     : Math.floor(interpolate(frame, [635, 955], [100, 54], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
 
-  const drought = interpolate(frame, [615, 645, 905, 940], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const drought = interpolate(frame, [615, 645, 935, 965], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const isDry = drought > 0.45;
-  const isRaining = frame >= 915 && frame <= 1005;
+  const isRaining = frame >= 940 && frame <= 1005;
   const fireActive = frame >= 990;
   const fireScale = fireActive ? spring({ frame: frame - 990, fps, config: { damping: 8 } }) : 0;
   const fireSpread2 = frame >= 1012 ? spring({ frame: frame - 1012, fps, config: { damping: 9 } }) : 0;
@@ -442,11 +442,11 @@ export const WorldBoxEp1: React.FC = () => {
       <Sequence from={275} durationInFrames={35}><Audio src={whoosh} volume={0.45} /></Sequence>
       <Sequence from={408} durationInFrames={35}><Audio src={whoosh} volume={0.35} /></Sequence>
       <Sequence from={510} durationInFrames={20}><Audio src={staticFile('sfx_wb_statue.wav')} volume={0.5} /></Sequence>
-      <Sequence from={620} durationInFrames={50}><Audio src={staticFile('sfx_wb_drought.wav')} volume={0.48} /></Sequence>
+      <Sequence from={620} durationInFrames={50}><Audio src={staticFile('sfx_wb_drought.wav')} volume={0.25} /></Sequence>
       <Sequence from={625} durationInFrames={25}><Audio src={mouseClick} volume={0.35} /></Sequence>
       {[690, 750, 810, 870].map((fr) => (<Sequence key={`dt-${fr}`} from={fr} durationInFrames={12}><Audio src={staticFile('sfx_wb_death.wav')} volume={0.28} /></Sequence>))}
-      <Sequence from={915} durationInFrames={95}><Audio src={staticFile('sfx_wb_rain.wav')} volume={0.42} /></Sequence>
-      <Sequence from={990} durationInFrames={265}><Audio src={staticFile('sfx_wb_fire.wav')} volume={0.46} /></Sequence>
+      <Sequence from={940} durationInFrames={70}><Audio src={staticFile('sfx_wb_rain.wav')} volume={0.25} /></Sequence>
+      <Sequence from={990} durationInFrames={265}><Audio src={staticFile('sfx_wb_fire.wav')} volume={0.22} /></Sequence>
       <Sequence from={1055} durationInFrames={40}><Audio src={whoosh} volume={0.5} /></Sequence>
       <Sequence from={cliffFrame} durationInFrames={60}><Audio src={ding} volume={0.55} /></Sequence>
 
@@ -533,7 +533,7 @@ export const WorldBoxEp1: React.FC = () => {
 
       {/* === GARIS PEMISAH VS === */}
       <div style={{
-        position: 'absolute', top: 798, left: 0, right: 0, height: 10,
+        position: 'absolute', top: 798, left: 0, right: 0, height: 10, opacity: cutActive ? 0 : 1,
         backgroundColor: '#0f172a', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 25,
       }}>
         <div style={{
@@ -657,7 +657,7 @@ export const WorldBoxEp1: React.FC = () => {
       )}
 
       {/* Backdrop Gelap + 2 Adegan Cutscene Close-Up */}
-      {cutActive && <AbsoluteFill style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)', zIndex: 35 }} />}
+      {cutActive && <AbsoluteFill style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)', opacity: Math.min(1, Math.max(bimaPop, udinPop)), zIndex: 35 }} />}
       {showBimaCut && (
         <AbsoluteFill style={{ transform: `scale(${bimaPop})`, zIndex: 38 }}>
           <CloseUpBima frame={frame} localFrame={frame - 275} />
@@ -726,7 +726,7 @@ export const WorldBoxEp1: React.FC = () => {
           position: 'absolute', top: 1435, left: 95, right: 95,
           backgroundColor: 'rgba(15, 23, 42, 0.95)', border: '4px solid #facc15',
           borderRadius: 16, padding: '16px 20px', textAlign: 'center',
-          fontFamily, fontSize: 16, color: '#facc15', transform: `scale(${cliffIn})`, zIndex: 55,
+          fontFamily, fontSize: 21, color: '#facc15', boxShadow: '0 10px 28px rgba(0,0,0,0.6)', transform: `scale(${cliffIn * (1 + Math.sin(frame * 0.22) * 0.025)})`, zIndex: 55,
           display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 12,
         }}>
           <span>BERSAMBUNG KE EPISODE 2</span>

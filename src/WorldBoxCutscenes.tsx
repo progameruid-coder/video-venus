@@ -117,7 +117,7 @@ export const CloseUpUdin: React.FC<{ frame: number; localFrame: number }> = ({ f
         <g transform={`translate(${rx}, ${160 - Math.abs(rs) * 3})`}>
           <ellipse cx="0" cy="11" rx="9" ry="3" fill="rgba(15,23,42,0.35)" />
           <rect x="-5" y={rs > 0 ? 4 : 7} width="4" height="6" fill="#0f172a" /><rect x="1" y={rs < 0 ? 4 : 7} width="4" height="6" fill="#0f172a" />
-          <rect x="-8" y="-12" width="16" height="18" fill="#dc2626" stroke="#0f172a" strokeWidth="2" /><rect x="-6" y="-23" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
+          <rect x="-8" y="-12" width="16" height="18" fill="#dc2626" stroke="#0f172a" strokeWidth="2" /><rect x="-6" y="-23" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" /><rect x="-13" y="-21" width="5" height="12" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.5" /><rect x="8" y="-21" width="5" height="12" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.5" />
         </g>
         <ellipse cx="176" cy="248" rx="68" ry="26" fill="#f97316" opacity={fp} />
         <g transform="translate(178, 246) scale(2.5)"><CutFire frame={frame} /></g>
