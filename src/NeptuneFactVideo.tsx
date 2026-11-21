@@ -80,7 +80,6 @@ const NeptuneChar: React.FC<{ size?: number; umbrella?: boolean; blink?: boolean
       <AbsoluteFill style={{ opacity: s1, justifyContent: 'center', alignItems: 'center' }}>
         <div style={{ transform: `translateY(${floatY}px) scale(${hookIn})`, marginBottom: 270, position: 'relative' }}>
           <NeptuneChar size={360} umbrella blink={isBlinking} />
-          <div style={{ position: 'absolute', bottom: -38, right: -10, fontFamily: 'sans-serif', fontSize: 22, fontWeight: 'bold', color: 'rgba(255,255,255,0.4)' }}>@dysesat</div>
         </div>
         <div style={{ position: 'absolute', bottom: 320, padding: '0 45px', textAlign: 'center', fontFamily, lineHeight: 1.65, transform: `scale(${hookIn})` }}>
           <div style={{ fontSize: 34, color: '#FFE600' }}>TAHUKAH KAMU?</div>
@@ -105,13 +104,11 @@ const NeptuneChar: React.FC<{ size?: number; umbrella?: boolean; blink?: boolean
             <div style={{ fontFamily: 'sans-serif', fontSize: 28, color: '#FFF', marginTop: 10 }}>Petir & tekanan tinggi memadatkan karbon jadi kristal berlian!</div>
           </div>
         </div>
-        <div style={{ marginTop: 28, fontFamily: 'sans-serif', fontSize: 22, fontWeight: 'bold', color: 'rgba(255,255,255,0.35)' }}>@dysesat</div>
       </AbsoluteFill>
 
       <AbsoluteFill style={{ opacity: s3, justifyContent: 'center', alignItems: 'center', padding: '0 45px' }}>
         <div style={{ transform: `translateY(${floatY}px) scale(${outroIn})`, marginBottom: 260, position: 'relative' }}>
           <NeptuneChar size={330} umbrella blink={isBlinking} />
-          <div style={{ position: 'absolute', bottom: -38, right: -10, fontFamily: 'sans-serif', fontSize: 22, fontWeight: 'bold', color: 'rgba(255,255,255,0.4)' }}>@dysesat</div>
         </div>
         <div style={{ position: 'absolute', bottom: 310, textAlign: 'center', padding: '0 40px', transform: `scale(${outroIn})` }}>
           <div style={{ fontFamily, fontSize: 28, color: '#72efdd', lineHeight: 1.6 }}>HUJAN BERLIAN MURNI</div>
