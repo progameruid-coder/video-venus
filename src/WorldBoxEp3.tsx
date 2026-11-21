@@ -66,9 +66,11 @@ const SvgCannon: React.FC<{ x: number; y: number; scale: number; frame: number; 
     <g transform={`translate(${x}, ${y}) scale(${scale})`}>
       <rect x="-10" y="-12" width="20" height="16" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
       <rect x="-7" y="-16" width="14" height="6" fill="#1e293b" /><rect x="-3" y="-12" width="6" height="11" fill="#0f172a" />
-      {puff < 14 && (
-        <g opacity={1 - puff / 14}>
-          <rect x="-6" y={2 + puff * 1.4} width="12" height="8" fill={puff < 5 ? '#fde047' : '#f8fafc'} />
+      {puff < 22 && (
+        <g>
+          {puff < 8 && <rect x="-5" y="1" width="10" height="7" fill={puff < 4 ? '#fde047' : '#f8fafc'} opacity={1 - puff / 8} />}
+          {puff < 15 && <rect x="-3" y={4 + puff * 2.1} width="6" height="6" rx="2" fill="#0f172a" />}
+          {puff >= 15 && <ellipse cx="0" cy="36" rx={(puff - 14) * 2.4} ry="4" fill="#e0f2fe" opacity={1 - (puff - 15) / 7} />}
         </g>
       )}
     </g>
@@ -90,14 +92,15 @@ const SvgDragonMap: React.FC<{ x: number; y: number; frame: number; scale: numbe
   return (
     <g transform={`translate(${x}, ${y}) scale(${scale})`}>
       <ellipse cx="0" cy="24" rx="22" ry="7" fill="rgba(15,23,42,0.45)" />
-      <rect x="-22" y={-14 + fl} width="18" height="14" fill="#991b1b" stroke="#0f172a" strokeWidth="1.5" />
-      <rect x="4" y={-14 - fl} width="18" height="14" fill="#991b1b" stroke="#0f172a" strokeWidth="1.5" />
-      <rect x="-9" y="-12" width="18" height="22" fill="#dc2626" stroke="#0f172a" strokeWidth="1.5" />
-      <rect x="-5" y="10" width="10" height="10" fill="#b91c1c" />
-      <rect x="7" y="-10" width="14" height="11" fill="#dc2626" stroke="#0f172a" strokeWidth="1.5" />
-      <rect x="14" y="-8" width="4" height="4" fill="#fde047" />
-      <rect x="20" y="-8" width={14 + Math.sin(frame * 0.8) * 5} height="9" fill="#f97316" />
-      <rect x="22" y="-6" width="9" height="5" fill="#fde047" />
+      <polygon points={`-4,-4 -26,${-18 + fl} -22,${2 + fl} -8,6`} fill="#991b1b" stroke="#0f172a" strokeWidth="1.5" />
+      <polygon points={`-4,6 -22,${20 - fl} -16,${8 - fl} -2,10`} fill="#7f1d1d" stroke="#0f172a" strokeWidth="1.5" />
+      <polygon points="-24,0 -10,-4 -10,5" fill="#b91c1c" stroke="#0f172a" strokeWidth="1.2" />
+      <rect x="-12" y="-7" width="22" height="14" fill="#dc2626" stroke="#0f172a" strokeWidth="1.5" />
+      <rect x="-6" y="-9" width="12" height="3" fill="#facc15" />
+      <rect x="8" y="-9" width="15" height="12" fill="#dc2626" stroke="#0f172a" strokeWidth="1.5" />
+      <rect x="10" y="-13" width="4" height="5" fill="#facc15" /><rect x="16" y="-7" width="4" height="4" fill="#fde047" />
+      <ellipse cx={32 + Math.sin(frame * 0.8) * 3} cy="-3" rx="12" ry="6" fill="#f97316" />
+      <ellipse cx="28" cy="-3" rx="7" ry="3.5" fill="#fde047" />
     </g>
   );
 };
