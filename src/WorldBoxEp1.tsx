@@ -1,3 +1,4 @@
+import { CloseUpBima, CloseUpUdin } from './WorldBoxCutscenes';
 import React from 'react';
 import { AbsoluteFill, Audio, Sequence, interpolate, random, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/PressStart2P';
