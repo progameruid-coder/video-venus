@@ -435,12 +435,18 @@ export const WorldBoxEp1: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: '#1d4ed8', overflow: 'hidden' }}>
       <Audio src={staticFile('vo_wb_ep1.mp3')} volume={1} />
-      <Audio src={staticFile('bgm.wav')} volume={0.16} />
-      <Sequence from={10} durationInFrames={40}><Audio src={ding} volume={0.4} /></Sequence>
+      <Audio src={staticFile('bgm_wb.wav')} volume={0.28} />
+      <Sequence from={5} durationInFrames={30}><Audio src={staticFile('sfx_wb_spawn.wav')} volume={0.55} /></Sequence>
+      {[95, 145, 195, 240].map((fr) => (<Sequence key={`ch-${fr}`} from={fr} durationInFrames={15}><Audio src={staticFile('sfx_wb_chop.wav')} volume={0.34} /></Sequence>))}
+      {[105, 155, 205, 255, 320, 440, 495].map((fr) => (<Sequence key={`bd-${fr}`} from={fr} durationInFrames={10}><Audio src={staticFile('sfx_wb_build.wav')} volume={0.38} /></Sequence>))}
       <Sequence from={275} durationInFrames={35}><Audio src={whoosh} volume={0.45} /></Sequence>
       <Sequence from={408} durationInFrames={35}><Audio src={whoosh} volume={0.35} /></Sequence>
-      <Sequence from={625} durationInFrames={30}><Audio src={mouseClick} volume={0.5} /></Sequence>
-      <Sequence from={990} durationInFrames={40}><Audio src={whoosh} volume={0.5} /></Sequence>
+      <Sequence from={510} durationInFrames={20}><Audio src={staticFile('sfx_wb_statue.wav')} volume={0.5} /></Sequence>
+      <Sequence from={620} durationInFrames={50}><Audio src={staticFile('sfx_wb_drought.wav')} volume={0.48} /></Sequence>
+      <Sequence from={625} durationInFrames={25}><Audio src={mouseClick} volume={0.35} /></Sequence>
+      {[690, 750, 810, 870].map((fr) => (<Sequence key={`dt-${fr}`} from={fr} durationInFrames={12}><Audio src={staticFile('sfx_wb_death.wav')} volume={0.28} /></Sequence>))}
+      <Sequence from={915} durationInFrames={95}><Audio src={staticFile('sfx_wb_rain.wav')} volume={0.42} /></Sequence>
+      <Sequence from={990} durationInFrames={265}><Audio src={staticFile('sfx_wb_fire.wav')} volume={0.46} /></Sequence>
       <Sequence from={1055} durationInFrames={40}><Audio src={whoosh} volume={0.5} /></Sequence>
       <Sequence from={cliffFrame} durationInFrames={60}><Audio src={ding} volume={0.55} /></Sequence>
 
