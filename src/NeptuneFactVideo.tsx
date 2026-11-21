@@ -47,6 +47,33 @@ const NeptuneChar: React.FC<{ size?: number; umbrella?: boolean; blink?: boolean
     </div>
   </div>
 );
+const SUBS = [
+  { s: 0, e: 185, t: 'Di Neptunus, hujannya bukan air, tapi berlian sungguhan!' },
+  { s: 185, e: 400, t: 'Atmosfer Neptunus penuh gas metana (CH4) yang kaya karbon.' },
+  { s: 400, e: 660, t: 'Badai petir & tekanan ekstrem memadatkan karbon jadi berlian!' },
+  { s: 660, e: 830, t: 'Kristal berlian murni pun jatuh turun seperti hujan deras!' },
+  { s: 830, e: 1010, t: 'Jadi di Neptunus, wajib pakai payung baja kalau keluar rumah!' },
+  { s: 1010, e: 1110, t: 'Unik banget, kan? Follow @dysesat untuk fakta lainnya!' },
+];
+
+export const NeptuneFactVideo: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const floatY = Math.sin(frame / 14) * 14;
+  const isBlinking = (frame % 95) > 88;
+  const camZoom = interpolate(frame, [0, 1110], [1, 1.08]);
+  const diamondPulse = 1 + Math.sin(frame / 8) * 0.12;
+  const lightningFlash = (frame >= 415 && frame <= 425) || (frame >= 445 && frame <= 452) ? 0.28 : 0;
+
+  const s1 = interpolate(frame, [175, 195], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const s2 = interpolate(frame, [185, 205, 815, 835], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const s3 = interpolate(frame, [825, 845], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+
+  const hookIn = spring({ frame: frame - 8, fps, config: { damping: 11 } });
+  const c1 = spring({ frame: frame - 210, fps, config: { damping: 11 } });
+  const c2 = spring({ frame: frame - 410, fps, config: { damping: 11 } });
+  const outroIn = spring({ frame: frame - 835, fps, config: { damping: 10 } });
+  const activeSub = SUBS.find((x) => frame >= x.s && frame < x.e);
   return (
     <AbsoluteFill style={{ background: 'radial-gradient(circle at 50% 35%, #1d2d50 0%, #070913 100%)', justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}>
       <Audio src={staticFile('vo_neptunus.mp3')} volume={1} />
@@ -72,13 +99,12 @@ const NeptuneChar: React.FC<{ size?: number; umbrella?: boolean; blink?: boolean
         );
       })}
 
-      {/* Watermark Utama Atas (Anti-Crop) */}
       <div style={{ position: 'absolute', top: 95, padding: '8px 22px', borderRadius: 30, backgroundColor: 'rgba(0,0,0,0.45)', border: '1px solid rgba(114, 239, 221, 0.45)', fontFamily: 'sans-serif', fontSize: 24, fontWeight: 'bold', color: 'rgba(255,255,255,0.75)', letterSpacing: 1 }}>
         @dysesat
       </div>
 
       <AbsoluteFill style={{ opacity: s1, justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ transform: `translateY(${floatY}px) scale(${hookIn})`, marginBottom: 270, position: 'relative' }}>
+        <div style={{ transform: `translateY(${floatY}px) scale(${hookIn})`, marginBottom: 270 }}>
           <NeptuneChar size={360} umbrella blink={isBlinking} />
         </div>
         <div style={{ position: 'absolute', bottom: 320, padding: '0 45px', textAlign: 'center', fontFamily, lineHeight: 1.65, transform: `scale(${hookIn})` }}>
@@ -107,7 +133,7 @@ const NeptuneChar: React.FC<{ size?: number; umbrella?: boolean; blink?: boolean
       </AbsoluteFill>
 
       <AbsoluteFill style={{ opacity: s3, justifyContent: 'center', alignItems: 'center', padding: '0 45px' }}>
-        <div style={{ transform: `translateY(${floatY}px) scale(${outroIn})`, marginBottom: 260, position: 'relative' }}>
+        <div style={{ transform: `translateY(${floatY}px) scale(${outroIn})`, marginBottom: 260 }}>
           <NeptuneChar size={330} umbrella blink={isBlinking} />
         </div>
         <div style={{ position: 'absolute', bottom: 310, textAlign: 'center', padding: '0 40px', transform: `scale(${outroIn})` }}>
