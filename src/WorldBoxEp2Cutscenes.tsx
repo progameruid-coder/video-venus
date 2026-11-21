@@ -48,14 +48,14 @@ export const CloseUpUdinGold: React.FC<{ frame: number; localFrame: number }> = 
           {!sparkle && <rect x="12" y="-56" width="6" height="6" fill="#ffffff" />}
         </g>
         {/* Warga Bodoh Menumpuk Emas ke Patung */}
-        <g transform={`translate(${wx}, ${160 - Math.abs(ws) * 3})`}>
+        <g transform={`translate(${wx}, ${160 - Math.abs(ws) * 3}) scale(${Math.cos(frame * 0.08) < 0 ? -1 : 1}, 1)`}>
           <ellipse cx="0" cy="11" rx="9" ry="3" fill="rgba(15,23,42,0.35)" />
           <rect x="-5" y={ws > 0 ? 4 : 7} width="4" height="6" fill="#0f172a" /><rect x="1" y={ws < 0 ? 4 : 7} width="4" height="6" fill="#0f172a" />
           <rect x="-8" y="-12" width="16" height="18" fill="#dc2626" stroke="#0f172a" strokeWidth="2" />
           <rect x="-6" y="-23" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
-          <rect x="4" y="-12" width="14" height="7" fill="#facc15" stroke="#0f172a" strokeWidth="1.5" />
+          {Math.cos(frame * 0.08) >= 0 && <rect x="4" y="-12" width="14" height="7" fill="#facc15" stroke="#0f172a" strokeWidth="1.5" />}
         </g>
-        <g transform={`translate(150, ${102 - pop * 0.6})`} opacity={1 - pop / 34}><rect x="0" y="0" width="66" height="15" rx="3" fill="#0f172a" stroke="#facc15" strokeWidth="1.5" /><text x="6" y="10.5" fill="#fde047" fontSize="7" fontFamily="monospace" fontWeight="bold">LAPIS EMAS!</text></g>{wx > 158 && <><rect x="164" y="114" width="6" height="6" fill="#fef08a" /><rect x="176" y="98" width="5" height="5" fill="#ffffff" /></>}
+        <g transform={`translate(150, ${66 - pop * 0.45})`} opacity={1 - pop / 34}><rect x="0" y="0" width="66" height="15" rx="3" fill="#0f172a" stroke="#facc15" strokeWidth="1.5" /><text x="6" y="10.5" fill="#fde047" fontSize="7" fontFamily="monospace" fontWeight="bold">LAPIS EMAS!</text></g>{wx > 158 && <><rect x="164" y="114" width="6" height="6" fill="#fef08a" /><rect x="176" y="98" width="5" height="5" fill="#ffffff" /></>}
 
         {/* KARAKTER CLOSE-UP: LEADER UDIN MENGGIGIT EMAS */}
         <g transform="translate(76, 224)">
@@ -105,7 +105,7 @@ export const CloseUpUdinGold: React.FC<{ frame: number; localFrame: number }> = 
 export const CloseUpBimaForge: React.FC<{ frame: number; localFrame: number }> = ({ frame, localFrame }) => {
   const talk = Math.abs(Math.sin(frame * 0.4)) > 0.45;
   const blink = (frame % 70) > 65;
-  const hammerHit = (frame % 16) < 6;
+  const hPh = (frame % 16) / 16; const hAng = hPh < 0.25 ? -14 : hPh < 0.75 ? -14 + ((hPh - 0.25) / 0.5) * 58 : 44 - ((hPh - 0.75) / 0.25) * 58; const hammerHit = hPh < 0.28;
   const zoom = interpolate(localFrame, [0, 150], [1, 1.06], { extrapolateRight: 'clamp' });
   const pop = (localFrame * 0.9) % 34;
 
@@ -118,8 +118,8 @@ export const CloseUpBimaForge: React.FC<{ frame: number; localFrame: number }> =
         <g>
           <rect x="0" y="78" width="240" height="36" fill="#94a3b8" stroke="#0f172a" strokeWidth="2" />
           {[8, 36, 64, 92, 120, 148, 176, 204].map((bx) => <rect key={bx} x={bx} y="68" width="16" height="12" fill="#cbd5e1" stroke="#0f172a" strokeWidth="2" />)}
-          <rect x="164" y="28" width="54" height="84" fill="#64748b" stroke="#0f172a" strokeWidth="2.5" />
-          <rect x="184" y="10" width="4" height="20" fill="#0f172a" /><rect x="188" y="10" width="18" height="11" fill="#2563eb" />
+          <rect x="164" y="42" width="54" height="70" fill="#64748b" stroke="#0f172a" strokeWidth="2.5" />
+          <rect x="184" y="22" width="4" height="22" fill="#0f172a" /><rect x="188" y="22" width={18 + Math.sin(frame * 0.35) * 2} height="11" fill="#2563eb" />
         </g>
         {/* Tungku Pandai Besi Menyala di Kanan */}
         <g transform="translate(132, 134)">
@@ -151,12 +151,12 @@ export const CloseUpBimaForge: React.FC<{ frame: number; localFrame: number }> =
           <rect x="-8" y="-4" width="16" height="18" fill="#78350f" />
           <rect x="-10" y="-32" width="20" height="20" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
           <rect x="-11" y="-36" width="22" height="7" fill="#3b2110" /><rect x="-6" y="-24" width="4" height="4" fill="#0f172a" />
-          <g transform={`translate(-10, -4) rotate(${hammerHit ? -12 : 42})`}>
+          <g transform={`translate(-10, -4) rotate(${hAng})`}>
             <rect x="-26" y="-4" width="26" height="6" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
             <rect x="-34" y="-10" width="12" height="18" fill="#94a3b8" stroke="#0f172a" strokeWidth="2" />
           </g>
         </g>
-        <g transform={`translate(136, ${192 - pop * 0.7})`} opacity={1 - pop / 34}><rect x="0" y="0" width="64" height="15" rx="3" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" /><text x="6" y="10.5" fill="#38bdf8" fontSize="7" fontFamily="monospace" fontWeight="bold">+1 BENTENG</text></g>
+        <g transform={`translate(168, ${124 - pop * 0.45})`} opacity={1 - pop / 34}><rect x="0" y="0" width="64" height="15" rx="3" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" /><text x="6" y="10.5" fill="#38bdf8" fontSize="7" fontFamily="monospace" fontWeight="bold">+1 BENTENG</text></g>
         {/* KARAKTER CLOSE-UP: LEADER BIMA */}
         <g transform="translate(72, 222)">
           <ellipse cx="0" cy="46" rx="32" ry="8" fill="rgba(15,23,42,0.35)" />
