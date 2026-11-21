@@ -1,139 +1,85 @@
 import React from 'react';
-import {
-  AbsoluteFill,
-  interpolate,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from 'remotion';
+import { AbsoluteFill, Audio, Sequence, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { loadFont } from '@remotion/google-fonts/PressStart2P';
+import { whoosh, whip, ding, mouseClick } from '@remotion/sfx';
 
 const { fontFamily } = loadFont();
 
+const VenusChar: React.FC<{ size?: number; spin?: number }> = ({ size = 340, spin = 0 }) => (
+  <div style={{
+    width: size, height: size, borderRadius: '50%',
+    background: 'radial-gradient(circle at 30% 30%, #ffd280, #f48c42 60%, #c84b31 100%)',
+    boxShadow: '0 0 50px rgba(244, 140, 66, 0.45), inset -22px -22px 45px rgba(0,0,0,0.35)',
+    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+    position: 'relative', transform: `rotate(${spin}deg)`,
+  }}>
+    <div style={{ display: 'flex', gap: size * 0.18, marginTop: 12 }}>
+      {[0, 1].map((i) => (
+        <div key={i} style={{ width: size * 0.11, height: size * 0.11, backgroundColor: '#2d140d', borderRadius: '50%' }} />
+      ))}
+    </div>
+    <div style={{ width: size * 0.1, height: size * 0.05, borderBottom: '5px solid #2d140d', borderRadius: '0 0 20px 20px', marginTop: 12 }} />
+  </div>
+);
 export const VenusFactVideo: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-
-  const floatY = Math.sin(frame / 15) * 15;
-
-  const textScale = spring({
-    frame: frame - 15,
-    fps,
-    config: { damping: 12 },
-  });
-
-  const ringPulse = 1 + Math.sin(frame / 20) * 0.02;
+  const floatY = Math.sin(frame / 15) * 14;
+  const s1 = interpolate(frame, [175, 195], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const s2 = interpolate(frame, [185, 205, 745, 765], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const s3 = interpolate(frame, [755, 775], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const c1 = spring({ frame: frame - 245, fps, config: { damping: 12 } });
+  const c2 = spring({ frame: frame - 485, fps, config: { damping: 12 } });
+  const slowSpin = interpolate(frame, [240, 750], [0, 140], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const orbit = interpolate(frame, [480, 750], [0, Math.PI * 2.2], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   return (
-    <AbsoluteFill
-      style={{
-        background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Latar Belakang Bintang Sederhana */}
-      <div style={{ position: 'absolute', top: '15%', left: '20%', color: '#FFD700', fontSize: 30 }}>★</div>
-      <div style={{ position: 'absolute', top: '25%', right: '18%', color: '#FFF', fontSize: 24 }}>✦</div>
-      <div style={{ position: 'absolute', bottom: '35%', left: '15%', color: '#FFF', fontSize: 20 }}>•</div>
-
-      {/* Grup Planet Venus */}
-      <div
-        style={{
-          transform: `translateY(${floatY}px)`,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: 180,
-        }}
-      >
-        {/* Cincin Orbit Tipis */}
-        <div
-          style={{
-            position: 'absolute',
-            width: 580,
-            height: 160,
-            border: '3px solid rgba(255, 255, 255, 0.35)',
-            borderRadius: '50%',
-            transform: `rotate(-20deg) scale(${ringPulse})`,
-          }}
-        />
-
-        {/* Badan Planet Venus */}
-        <div
-          style={{
-            width: 400,
-            height: 400,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle at 30% 30%, #ffd280, #f48c42 60%, #c84b31 100%)',
-            boxShadow: '0 0 60px rgba(244, 140, 66, 0.4), inset -25px -25px 50px rgba(0,0,0,0.3)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-          }}
-        >
-          {/* Mata Kartun */}
-          <div style={{ display: 'flex', gap: 70, marginTop: 20 }}>
-            <div style={{ width: 42, height: 42, backgroundColor: '#2d140d', borderRadius: '50%', position: 'relative' }}>
-              <div style={{ width: 14, height: 14, backgroundColor: '#fff', borderRadius: '50%', position: 'absolute', top: 6, left: 6 }} />
-            </div>
-            <div style={{ width: 42, height: 42, backgroundColor: '#2d140d', borderRadius: '50%', position: 'relative' }}>
-              <div style={{ width: 14, height: 14, backgroundColor: '#fff', borderRadius: '50%', position: 'absolute', top: 6, left: 6 }} />
-            </div>
-          </div>
-
-          {/* Pipi Merona & Senyum */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 35, marginTop: 12 }}>
-            <div style={{ width: 32, height: 16, backgroundColor: '#ff7b54', borderRadius: '50%', opacity: 0.7 }} />
-            <div
-              style={{
-                width: 36,
-                height: 18,
-                borderBottom: '6px solid #2d140d',
-                borderRadius: '0 0 20px 20px',
-              }}
-            />
-            <div style={{ width: 32, height: 16, backgroundColor: '#ff7b54', borderRadius: '50%', opacity: 0.7 }} />
+    <AbsoluteFill style={{ background: 'radial-gradient(circle at center, #1b2735 0%, #090a0f 100%)', justifyContent: 'center', alignItems: 'center' }}>
+      <Audio src={staticFile('vo.mp3')} volume={1} />
+      <Sequence from={5} durationInFrames={45}><Audio src={whoosh} volume={0.35} /></Sequence>
+      <Sequence from={185} durationInFrames={45}><Audio src={whip} volume={0.35} /></Sequence>
+      <Sequence from={245} durationInFrames={30}><Audio src={mouseClick} volume={0.45} /></Sequence>
+      <Sequence from={485} durationInFrames={30}><Audio src={mouseClick} volume={0.45} /></Sequence>
+      <Sequence from={760} durationInFrames={60}><Audio src={ding} volume={0.4} /></Sequence>
+      <AbsoluteFill style={{ opacity: s1, justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ transform: `translateY(${floatY}px)`, marginBottom: 240 }}><VenusChar size={380} /></div>
+        <div style={{ position: 'absolute', bottom: 240, padding: '0 45px', textAlign: 'center', fontFamily, lineHeight: 1.65 }}>
+          <div style={{ fontSize: 34, color: '#FFE600' }}>TAHUKAH KAMU?</div>
+          <div style={{ fontSize: 30, color: '#FF9E00', marginTop: 18 }}>1 HARI DI VENUS</div>
+          <div style={{ fontSize: 30, color: '#FFF', marginTop: 14 }}>LEBIH LAMA DARI <span style={{ color: '#FF4D4D' }}>1 TAHUNNYA!</span></div>
+        </div>
+      </AbsoluteFill>
+      <AbsoluteFill style={{ opacity: s2, justifyContent: 'center', alignItems: 'center', padding: '0 45px' }}>
+        <div style={{ fontFamily, fontSize: 28, color: '#FFE600', marginBottom: 45 }}>KOK BISA BEGITU?</div>
+        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.08)', border: '3px solid #FF9E00', borderRadius: 28, padding: 28, marginBottom: 36, transform: `scale(${c1})`, display: 'flex', alignItems: 'center', gap: 28 }}>
+          <VenusChar size={150} spin={slowSpin} />
+          <div>
+            <div style={{ fontFamily, fontSize: 22, color: '#FF9E00' }}>1 HARI (ROTASI)</div>
+            <div style={{ fontFamily: 'sans-serif', fontSize: 28, color: '#FFF', marginTop: 10 }}>Berputar sangat lambat:</div>
+            <div style={{ fontFamily, fontSize: 24, color: '#FF4D4D', marginTop: 12 }}>243 HARI BUMI</div>
           </div>
         </div>
-      </div>
-
-      {/* Teks Piksel Berwarna di Bagian Bawah */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 220,
-          padding: '0 50px',
-          textAlign: 'center',
-          fontFamily,
-          transform: `scale(${textScale})`,
-          lineHeight: 1.6,
-        }}
-      >
-        <div style={{ fontSize: 34, color: '#FFE600', textShadow: '4px 4px 0px #000' }}>
-          TAHUKAH KAMU?
+        <div style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.08)', border: '3px solid #4CC9F0', borderRadius: 28, padding: 28, transform: `scale(${c2})`, display: 'flex', alignItems: 'center', gap: 28 }}>
+          <div style={{ width: 150, height: 150, position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', flexShrink: 0 }}>
+            <div style={{ width: 130, height: 130, borderRadius: '50%', border: '2px dashed #4CC9F0', position: 'absolute' }} />
+            <div style={{ width: 50, height: 50, borderRadius: '50%', backgroundColor: '#FF9E00' }} />
+            <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: '#f48c42', position: 'absolute', transform: `translate(${Math.cos(orbit) * 65}px, ${Math.sin(orbit) * 65}px)` }} />
+          </div>
+          <div>
+            <div style={{ fontFamily, fontSize: 22, color: '#4CC9F0' }}>1 TAHUN (ORBIT)</div>
+            <div style={{ fontFamily: 'sans-serif', fontSize: 28, color: '#FFF', marginTop: 10 }}>Mengelilingi Matahari:</div>
+            <div style={{ fontFamily, fontSize: 24, color: '#A0E7E5', marginTop: 12 }}>225 HARI BUMI</div>
+          </div>
         </div>
-        <div style={{ fontSize: 32, color: '#FF9E00', textShadow: '4px 4px 0px #000', marginTop: 12 }}>
-          SATU HARI DI VENUS
+      </AbsoluteFill>
+      <AbsoluteFill style={{ opacity: s3, justifyContent: 'center', alignItems: 'center', padding: '0 45px' }}>
+        <div style={{ transform: `translateY(${floatY}px)`, marginBottom: 260 }}><VenusChar size={330} /></div>
+        <div style={{ position: 'absolute', bottom: 230, textAlign: 'center', padding: '0 40px' }}>
+          <div style={{ fontFamily, fontSize: 28, color: '#FFE600', lineHeight: 1.6 }}>TAHUN BARU DULUAN</div>
+          <div style={{ fontFamily, fontSize: 24, color: '#FFF', marginTop: 16 }}>SEBELUM 1 HARI SELESAI!</div>
+          <div style={{ fontFamily: 'sans-serif', fontSize: 30, fontWeight: 'bold', color: '#A0E7E5', marginTop: 32, padding: '14px 24px', borderRadius: 20, border: '2px solid #A0E7E5' }}>Planet mana lagi nih yang mau dibahas? 👇</div>
         </div>
-        <div style={{ fontSize: 32, color: '#FFFFFF', textShadow: '4px 4px 0px #000', marginTop: 12 }}>
-          LEBIH LAMA DARI <span style={{ color: '#FF4D4D' }}>SATU TAHUNNYA!</span>
-        </div>
-        <div
-          style={{
-            fontSize: 22,
-            color: '#A0E7E5',
-            marginTop: 35,
-            fontFamily: 'sans-serif',
-            fontWeight: 'bold',
-          }}
-        >
-          Kira-kira kenapa ya? 🧐
-        </div>
-      </div>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
