@@ -38,13 +38,15 @@ const NeptuneChar: React.FC<{ size?: number; umbrella?: boolean; blink?: boolean
     )}
     <div style={{ display: 'flex', gap: size * 0.18, marginTop: 12 }}>
       {[0, 1].map((i) => (
-        <div key={i} style={{ width: size * 0.11, height: blink ? 6 : size * 0.11, backgroundColor: '#0b132b', borderRadius: '50%' }} />
+        <div key={i} style={{ width: size * 0.11, height: blink ? 7 : size * 0.11, backgroundColor: blink ? 'transparent' : '#0b132b', borderTop: blink ? '6px solid #0b132b' : 'none', borderRadius: '50%' }} />
       ))}
     </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: size * 0.08, marginTop: 10 }}>
-      <div style={{ width: size * 0.08, height: size * 0.04, backgroundColor: '#ff758f', borderRadius: '50%', opacity: 0.85 }} />
-      <div style={{ width: size * 0.11, height: size * 0.055, borderBottom: '5px solid #0b132b', borderRadius: '0 0 20px 20px' }} />
-      <div style={{ width: size * 0.08, height: size * 0.04, backgroundColor: '#ff758f', borderRadius: '50%', opacity: 0.85 }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: size * 0.07, marginTop: 10 }}>
+      <div style={{ width: size * 0.085, height: size * 0.045, backgroundColor: '#ff758f', borderRadius: '50%', opacity: 0.9 }} />
+      <div style={{ width: size * 0.14, height: size * (squash > 1 ? 0.085 : 0.06), backgroundColor: '#0b132b', borderRadius: '8px 8px 40px 40px', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', overflow: 'hidden' }}>
+        <div style={{ width: '65%', height: '45%', backgroundColor: '#ff758f', borderRadius: '50% 50% 0 0' }} />
+      </div>
+      <div style={{ width: size * 0.085, height: size * 0.045, backgroundColor: '#ff758f', borderRadius: '50%', opacity: 0.9 }} />
     </div>
   </div>
 );
