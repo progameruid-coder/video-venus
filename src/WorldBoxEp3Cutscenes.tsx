@@ -30,11 +30,14 @@ export const CloseUpBarter: React.FC<{ frame: number; localFrame: number }> = ({
         <rect y="94" width="240" height="26" fill="#0284c7" /><rect y="114" width="240" height="22" fill="#fde047" />
         <rect y="132" width="240" height="178" fill="#57534e" /><rect y="132" width="240" height="10" fill="#78716c" />
         {/* Kapal Perang di Teluk Kiri & Gua Emas + Patung Emas Detail di Kanan */}
-        <g transform={`translate(36, ${98 + Math.sin(frame * 0.16) * 1.5})`}>
-          <rect x="-20" y="6" width="40" height="4" fill="#bae6fd" opacity="0.6" />
-          <rect x="-18" y="0" width="36" height="8" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
-          <rect x="-1" y="-26" width="3" height="26" fill="#451a03" />
-          <rect x="2" y="-24" width="16" height="15" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" /><rect x="6" y="-20" width="6" height="5" fill="#fde047" />
+        <g transform={`translate(42, ${99 + Math.sin(frame * 0.16) * 1.5})`}>
+          <rect x="-24" y="6" width="48" height="3.5" fill="#bae6fd" opacity="0.65" />
+          <polygon points="-22,-2 24,-2 17,7 -17,7" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x="-20" y="-8" width="11" height="6" fill="#92400e" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="-2" y="-29" width="3" height="27" fill="#451a03" />
+          <polygon points="1,-26 16,-22 18,-10 1,-9" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x="6" y="-20" width="5" height="5" fill="#fde047" />
+          <polygon points="15,-21 26,-6 15,-7" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.2" />
         </g>
         <g transform="translate(198, 134)">
           <rect x="-26" y="-4" width="52" height="10" fill="#475569" stroke="#0f172a" strokeWidth="2" />
@@ -100,9 +103,9 @@ export const CloseUpBarter: React.FC<{ frame: number; localFrame: number }> = ({
           </g>
         </g>
 
-        <g transform={`translate(62, ${48 + pop})`}>
-          <rect x="0" y="0" width="116" height="22" rx="5" fill="#0f172a" stroke="#facc15" strokeWidth="2.5" />
-          <text x="12" y="14.5" fill="#fde047" fontSize="9" fontFamily="monospace" fontWeight="bold">DEAL BODOH! ⇄</text>
+        <g transform={`translate(69, ${48 + pop})`}>
+          <rect x="0" y="0" width="102" height="22" rx="5" fill="#0f172a" stroke="#facc15" strokeWidth="2.5" />
+          <text x="12" y="14.5" fill="#fde047" fontSize="9" fontFamily="monospace" fontWeight="bold">DEAL BODOH!</text>
         </g>
       </svg>
       <div style={{ position: 'absolute', bottom: 24, left: 24, right: 24, backgroundColor: 'rgba(15, 23, 42, 0.92)', border: '4px solid #facc15', borderRadius: 16, padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -171,11 +174,12 @@ export const CloseUpDragon: React.FC<{ frame: number; localFrame: number }> = ({
           </g>
           {/* Semburan Api Berlapis Mengarah ke Kiri-Atas (Bebas dari Kepala Udin!) */}
           <g transform="translate(-74, -10) rotate(12)">
-            <ellipse cx={-38 - Math.sin(frame * 0.8) * 6} cy="0" rx="44" ry="20" fill="#dc2626" opacity="0.88" />
-            <ellipse cx={-32 - Math.cos(frame * 0.9) * 5} cy="0" rx="34" ry="14" fill="#f97316" opacity="0.95" />
-            <ellipse cx={-20 - Math.sin(frame * 0.7) * 4} cy="0" rx="22" ry="8" fill="#fde047" />
-            <rect x={-78 - (frame % 14)} y="-6" width="12" height="10" fill="#f97316" opacity="0.8" />
-            <rect x={-90 - ((frame + 7) % 16)} y="4" width="9" height="8" fill="#fde047" opacity="0.75" />
+            <rect x={-76 - Math.sin(frame * 0.8) * 6} y="-14" width="76" height="28" fill="#dc2626" />
+            <rect x={-64 - Math.cos(frame * 0.9) * 5} y="-18" width="46" height="36" fill="#dc2626" opacity="0.9" />
+            <rect x={-58 - Math.cos(frame * 0.9) * 5} y="-10" width="58" height="20" fill="#f97316" />
+            <rect x={-38 - Math.sin(frame * 0.7) * 4} y="-6" width="38" height="12" fill="#fde047" />
+            <rect x={-88 - (frame % 14)} y="-8" width="12" height="10" fill="#f97316" />
+            <rect x={-96 - ((frame + 7) % 14)} y="4" width="9" height="8" fill="#fde047" />
           </g>
         </g>
         {/* Bara Api Beturbangan */}

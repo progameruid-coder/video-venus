@@ -41,11 +41,24 @@ const Ep3Icon: React.FC<{ type: 'ship' | 'gold' | 'bread' | 'cannon' | 'dragon' 
   </svg>
 );
 
-const SvgHouse3: React.FC<{ x: number; y: number; roof: string; stone?: boolean; tilted?: boolean; scale?: number }> = ({ x, y, roof, stone = true, tilted = false, scale = 1 }) => (
+const SvgHouse3: React.FC<{ x: number; y: number; roof: string; stone?: boolean; tilted?: boolean; scale?: number; goldTrim?: boolean }> = ({ x, y, roof, stone = true, tilted = false, scale = 1, goldTrim = false }) => (
   <g transform={`translate(${x}, ${y}) rotate(${tilted ? 11 : 0}) scale(${scale})`}>
     <rect x="-11" y="-11" width="22" height="14" fill="#0f172a" /><rect x="-10" y="-10" width="20" height="12" fill={stone ? '#cbd5e1' : '#d97706'} />
     <rect x="-3" y="-4" width="6" height="6" fill="#451a03" /><rect x="4" y="-7" width="4" height="4" fill="#fef08a" />
     <rect x="-14" y="-16" width="28" height="7" fill="#0f172a" /><rect x="-13" y="-15" width="26" height="5" fill={roof} /><rect x="-10" y="-19" width="20" height="4" fill={roof} />
+    {goldTrim && <rect x="-10" y="-20" width="20" height="2" fill="#facc15" />}
+  </g>
+);
+const SvgWindmill: React.FC<{ x: number; y: number; frame: number }> = ({ x, y, frame }) => (
+  <g transform={`translate(${x}, ${y})`}>
+    <rect x="-9" y="-14" width="18" height="17" fill="#cbd5e1" stroke="#0f172a" strokeWidth="1.5" />
+    <rect x="-3" y="-4" width="6" height="7" fill="#451a03" />
+    <polygon points="-11,-14 0,-23 11,-14" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" />
+    <g transform={`translate(0, -13) rotate(${(frame * 2.4) % 360})`}>
+      <rect x="-14" y="-1.5" width="28" height="3" fill="#78350f" /><rect x="-1.5" y="-14" width="3" height="28" fill="#78350f" />
+      <rect x="4" y="-4" width="9" height="3" fill="#f8fafc" /><rect x="-13" y="1" width="9" height="3" fill="#f8fafc" />
+      <rect x="-4" y="-13" width="3" height="9" fill="#f8fafc" /><rect x="1" y="4" width="3" height="9" fill="#f8fafc" />
+    </g>
   </g>
 );
 
@@ -77,13 +90,21 @@ const SvgCannon: React.FC<{ x: number; y: number; scale: number; frame: number; 
   );
 };
 
-const SvgWarship3: React.FC<{ x: number; y: number; frame: number; goldCargo?: boolean }> = ({ x, y, frame, goldCargo = false }) => (
-  <g transform={`translate(${x}, ${y + Math.sin(frame * 0.16) * 2}) scale(1.12)`}>
-    <rect x="-20" y="6" width="40" height="4" fill="#bae6fd" opacity="0.65" />
-    <rect x="-18" y="-2" width="36" height="9" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
-    {goldCargo && <><rect x="-12" y="-7" width="10" height="6" fill="#facc15" stroke="#0f172a" strokeWidth="1" /><rect x="4" y="-7" width="9" height="6" fill="#fde047" stroke="#0f172a" strokeWidth="1" /></>}
-    <rect x="-1" y="-28" width="3" height="24" fill="#451a03" />
-    <rect x="2" y="-26" width="16" height="16" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" /><rect x="6" y="-22" width="6" height="6" fill="#fde047" />
+const SvgWarship3: React.FC<{ x: number; y: number; frame: number; goldCargo?: boolean; flip?: boolean }> = ({ x, y, frame, goldCargo = false, flip = false }) => (
+  <g transform={`translate(${x}, ${y + Math.sin(frame * 0.16) * 2}) scale(${flip ? -1.12 : 1.12}, 1.12)`}>
+    <rect x="-24" y="6" width="46" height="3.5" fill="#bae6fd" opacity="0.7" />
+    <rect x="-32" y="7" width="8" height="2.5" fill="#e0f2fe" opacity="0.6" />
+    <polygon points="-22,-2 24,-2 17,7 -17,7" fill="#451a03" stroke="#0f172a" strokeWidth="1.4" />
+    <rect x="-19" y="-3" width="38" height="5" fill="#92400e" />
+    <rect x="-20" y="-9" width="11" height="7" fill="#78350f" stroke="#0f172a" strokeWidth="1.2" />
+    <polygon points="18,-3 30,-8 28,-5 18,0" fill="#78350f" stroke="#0f172a" strokeWidth="1" />
+    <rect x="-8" y="0" width="3" height="2.5" fill="#0f172a" /><rect x="0" y="0" width="3" height="2.5" fill="#0f172a" /><rect x="8" y="0" width="3" height="2.5" fill="#0f172a" />
+    {goldCargo && <><rect x="-12" y="-7" width="8" height="5" fill="#facc15" stroke="#0f172a" strokeWidth="1" /><rect x="6" y="-7" width="8" height="5" fill="#fde047" stroke="#0f172a" strokeWidth="1" /></>}
+    <rect x="-2" y="-30" width="3" height="27" fill="#451a03" />
+    <polygon points="1,-27 16,-23 18,-11 1,-10" fill="#2563eb" stroke="#0f172a" strokeWidth="1.4" />
+    <rect x="6" y="-21" width="5" height="5" fill="#fde047" />
+    <polygon points="15,-22 26,-7 15,-8" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.1" />
+    <rect x="-2" y="-33" width={9 + Math.sin(frame * 0.35) * 2} height="4" fill="#38bdf8" stroke="#0f172a" strokeWidth="0.8" />
   </g>
 );
 
@@ -158,13 +179,13 @@ export const WorldBoxEp3: React.FC = () => {
   const quake = frame >= 885 && frame < 985 ? Math.sin(frame * 2.4) * 4 : 0;
 
   const showBarterCut = frame >= 340 && frame <= 565;
-  const showDragonCut = frame >= 985;
+  const showDragonCut = frame >= 965;
   const cutActive = showBarterCut || showDragonCut;
   const barterPop = showBarterCut ? spring({ frame: frame - 340, fps, config: { damping: 12 } }) : 0;
-  const dragonPop = showDragonCut ? spring({ frame: frame - 985, fps, config: { damping: 11 } }) : 0;
+  const dragonPop = showDragonCut ? spring({ frame: frame - 965, fps, config: { damping: 11 } }) : 0;
 
   const lastEnd = WORD_SUBS_EP3.length > 0 ? WORD_SUBS_EP3[WORD_SUBS_EP3.length - 1].e : 38.5;
-  const cliffFrame = Math.min(1190, Math.ceil((lastEnd + 0.12) * fps));
+  const cliffFrame = Math.min(1065, Math.ceil((lastEnd + 0.12) * fps));
   const showCliff = frame >= cliffFrame;
   const cliffIn = showCliff ? spring({ frame: frame - cliffFrame, fps, config: { damping: 10 } }) : 0;
   const activeIdx = WORD_SUBS_EP3.findIndex((x) => sec >= x.s && sec < x.e);
@@ -197,8 +218,8 @@ export const WorldBoxEp3: React.FC = () => {
       <Sequence from={605} durationInFrames={14}><Audio src={staticFile('sfx_wb3_coin.wav')} volume={0.34} /></Sequence>
       {[705, 775].map((fr) => <Sequence key={`cn-${fr}`} from={fr} durationInFrames={18}><Audio src={staticFile('sfx_wb3_cannon.wav')} volume={0.28} /></Sequence>)}
       <Sequence from={885} durationInFrames={68}><Audio src={staticFile('sfx_wb3_quake.wav')} volume={0.28} /></Sequence>
-      <Sequence from={925} durationInFrames={200}><Audio src={staticFile('sfx_wb3_roar.wav')} volume={0.24} /></Sequence>
-      <Sequence from={985} durationInFrames={35}><Audio src={whoosh} volume={0.42} /></Sequence>
+      <Sequence from={925} durationInFrames={200}><Audio src={staticFile('sfx_wb3_roar.wav')} volume={0.17} /></Sequence>
+      <Sequence from={965} durationInFrames={35}><Audio src={whoosh} volume={0.42} /></Sequence>
       <Sequence from={cliffFrame} durationInFrames={60}><Audio src={ding} volume={0.5} /></Sequence>
 
       <AbsoluteFill style={{ backgroundImage: 'radial-gradient(#38bdf8 4px, transparent 4px)', backgroundSize: '46px 46px', backgroundPosition: `${(frame * 0.8) % 46}px ${(frame * 0.35) % 46}px`, opacity: 0.38 }} />
@@ -209,16 +230,16 @@ export const WorldBoxEp3: React.FC = () => {
           {renderTiles(false)}
           <rect x="270" y="96" width="68" height="72" fill="#92400e" />
           {[0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => <rect key={`${r}-${c}`} x={275 + c * 15} y={101 + r * 16} width="10" height="10" fill="#fde047" />))}
-          <SvgHouse3 x={294} y={84} roof="#f59e0b" scale={0.95} />
+          <SvgWindmill x={298} y={82} frame={frame} />
           <g><rect x="102" y="58" width="244" height="6" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" /><rect x="102" y="194" width="104" height="6" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" /><rect x="238" y="194" width="108" height="6" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" /><rect x="102" y="58" width="6" height="142" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" /><rect x="340" y="58" width="6" height="142" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" /></g>
           {SMART_TREES.map((tr, i) => <g key={i} transform={`translate(${tr.x}, ${tr.y}) scale(${tr.size})`}><rect x="-2" y="-5" width="4" height="7" fill="#78350f" /><rect x="-8" y="-13" width="16" height="9" fill="#166534" /><rect x="-6" y="-18" width="12" height="7" fill="#15803d" /><rect x="-4" y="-21" width="8" height="4" fill="#22c55e" /></g>)}
-          {SMART_HOUSES.map(([hx, hy], idx) => <SvgHouse3 key={idx} x={hx} y={hy} roof={hasGoldCastle ? '#ca8a04' : '#2563eb'} />)}
+          {SMART_HOUSES.map(([hx, hy], idx) => <SvgHouse3 key={idx} x={hx} y={hy} roof="#2563eb" goldTrim={frame >= 605 + idx * 10} />)}
           <SvgHouse3 x={220} y={134} roof="#475569" />
           <SvgCastle3 x={176} y={136} gold={hasGoldCastle} frame={frame} />
           {hasCannons && <><SvgCannon x={152} y={208} scale={spring({ frame: frame - 685, fps, config: { damping: 10 } })} frame={frame} offset={0} /><SvgCannon x={302} y={208} scale={spring({ frame: frame - 700, fps, config: { damping: 10 } })} frame={frame} offset={35} /></>}
           <rect x="210" y="198" width="24" height="24" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
-          {frame < 75 && <SvgWarship3 x={265 + frame * 1.4} y={226 + frame * 0.28} frame={frame} />}
-          {frame >= 560 && <SvgWarship3 x={interpolate(frame, [560, 635], [355, 258], { extrapolateRight: 'clamp' })} y={226} frame={frame} goldCargo />}
+          {frame < 55 && <SvgWarship3 x={265 + frame * 3.1} y={226 + frame * 0.3} frame={frame} />}
+          {frame >= 560 && <SvgWarship3 x={interpolate(frame, [560, 635], [405, 258], { extrapolateRight: 'clamp' })} y={226} frame={frame} goldCargo flip={frame < 635} />}{frame >= 630 && <g transform="translate(215, 206)"><rect x="0" y="0" width="9" height="6" fill="#facc15" stroke="#0f172a" strokeWidth="1" /><rect x="6" y="-4" width="8" height="5" fill="#fde047" stroke="#0f172a" strokeWidth="1" /></g>}
           {SMART_CITIZENS.map((c) => { const p = walkP(SMART_PATHS[c.pathIdx], c.offset + frame * c.speed); return <SvgCitizen3 key={c.id} x={p.x + c.jx} y={p.y + c.jy} shirt="#2563eb" step={frame * 0.35 + c.id} flip={p.flip} carry={hasGoldCastle && c.id % 3 === 0 ? 'gold' : undefined} bubble={hasCannons && c.id === 2 ? 'cannon' : hasGoldCastle && c.id === 4 ? 'gold' : undefined} />; })}
           {frame >= 565 && (() => { const bp = walkP([[192, 113], [248, 113], [248, 152], [192, 152]], frame * 0.003); return <SvgCitizen3 x={bp.x} y={bp.y} shirt="#1e40af" step={frame * 0.3} flip={bp.flip} isLeader bubble={hasCannons ? 'cannon' : 'gold'} />; })()}
         </svg>
@@ -249,12 +270,11 @@ export const WorldBoxEp3: React.FC = () => {
           {/* Keranjang Roti Hasil Barter */}
           {frame >= 550 && <g transform="translate(174, 154)"><rect x="-10" y="-5" width="20" height="10" fill="#92400e" stroke="#0f172a" strokeWidth="1.2" /><rect x="-7" y="-9" width="14" height="6" fill="#f59e0b" /></g>}
           {/* Kapal Perang Pulau Pintar Merapat di Pantai Utara Pulau Bodoh */}
-          {frame >= 55 && frame < 565 && (
+          {frame >= 58 && frame < 555 && (
             <SvgWarship3
-              x={frame < 120 ? interpolate(frame, [55, 120], [340, 232]) : frame > 510 ? interpolate(frame, [510, 565], [232, 360]) : 232}
-              y={frame < 120 ? interpolate(frame, [55, 120], [18, 44]) : 44}
-              frame={frame}
-              goldCargo={frame > 340}
+              x={frame < 125 ? interpolate(frame, [58, 125], [405, 232]) : frame > 495 ? interpolate(frame, [495, 555], [232, 415]) : 232}
+              y={frame < 125 ? interpolate(frame, [58, 125], [18, 44]) : 44}
+              frame={frame} goldCargo={frame > 340} flip={frame < 490}
             />
           )}
           {/* Pasukan Biru & Leader Bima Mendarat (Frame 115 - 520) */}
@@ -271,19 +291,17 @@ export const WorldBoxEp3: React.FC = () => {
             const t = (frame * (dragonOut ? 0.025 : c.speed) + c.offset) % 2;
             let px = t < 1 ? c.ax + (c.bx - c.ax) * t : c.bx + (c.ax - c.bx) * (t - 1);
             let py = t < 1 ? c.ay + (c.by - c.ay) * t : c.by + (c.ay - c.by) * (t - 1);
-            if (frame >= 620 && frame < 910 && c.id % 2 === 0) {
-              const p = walkP([[104, 86], [164, 148], [104, 86]], c.offset + frame * 0.005);
-              px = p.x + (c.id % 3) * 5; py = p.y + (c.id % 2) * 5;
-            }
-            const bub = dragonOut ? (c.id % 2 === 0 ? 'panic' : 'fire') : frame >= 565 && c.id % 4 === 0 ? 'bread' : frame >= 100 && frame < 340 && c.id % 3 === 0 ? 'panic' : undefined;
+            if (frame >= 565 && frame < 910 && c.id % 3 === 0) { const a = c.id * 1.3 + frame * 0.04; px = 106 + Math.cos(a) * 18; py = 92 + Math.sin(a) * 12; } else if (frame >= 565 && frame < 910 && c.id % 3 === 1) { const a = c.id * 0.9 + Math.sin(frame * 0.05 + c.id) * 0.5; px = 194 + Math.cos(a) * 32; py = 148 + Math.sin(a) * 18; }
+            const bub = dragonOut ? (c.id % 5 === 0 ? 'panic' : undefined) : frame >= 565 && c.id % 4 === 0 ? 'bread' : frame >= 100 && frame < 340 && c.id % 3 === 0 ? 'panic' : undefined;
             return <SvgCitizen3 key={c.id} x={px} y={py} shirt="#dc2626" step={frame * (dragonOut ? 0.7 : 0.45) + c.id} flip={t >= 1} carry={frame >= 565 && !dragonOut && c.id % 3 === 0 ? 'bread' : undefined} bubble={bub} />;
           })}
           {(() => { const up = walkP([[116, 98], [186, 144], [142, 134]], frame * 0.006); return <SvgCitizen3 x={up.x} y={up.y} shirt="#991b1b" step={frame * 0.5} flip={up.flip} isLeader bubble={dragonOut ? 'panic' : frame >= 565 ? 'bread' : 'gold'} />; })()}
           {/* Naga Api Terbang Keluar dari Gua di Peta */}
+          {dragonOut && [[122, 92], [156, 106], [192, 118]].map(([fx, fy], idx) => frame >= 920 + idx * 12 ? <g key={`df-${idx}`} transform={`translate(${fx}, ${fy})`}><rect x="-6" y="-8" width="12" height="9" fill="#ef4444" /><rect x="-4" y="-11" width="8" height="8" fill="#f97316" /><rect x="-2" y="-7" width="4" height="5" fill="#fde047" /></g> : null)}
           {dragonOut && (
             <SvgDragonMap
-              x={interpolate(frame, [910, 990], [98, 255], { extrapolateRight: 'clamp' })}
-              y={interpolate(frame, [910, 990], [82, 128], { extrapolateRight: 'clamp' })}
+              x={interpolate(frame, [910, 968], [98, 255], { extrapolateRight: 'clamp' })}
+              y={interpolate(frame, [910, 968], [82, 128], { extrapolateRight: 'clamp' })}
               frame={frame}
               scale={spring({ frame: frame - 910, fps, config: { damping: 9 } }) * 1.35}
             />
@@ -297,7 +315,7 @@ export const WorldBoxEp3: React.FC = () => {
 
       {cutActive && <AbsoluteFill style={{ backgroundColor: 'rgba(15, 23, 42, 0.6)', opacity: Math.min(1, Math.max(barterPop, dragonPop)), zIndex: 35 }} />}
       {showBarterCut && <AbsoluteFill style={{ transform: `scale(${barterPop})`, zIndex: 38 }}><CloseUpBarter frame={frame} localFrame={frame - 340} /></AbsoluteFill>}
-      {showDragonCut && <AbsoluteFill style={{ transform: `scale(${dragonPop})`, zIndex: 38 }}><CloseUpDragon frame={frame} localFrame={frame - 985} /></AbsoluteFill>}
+      {showDragonCut && <AbsoluteFill style={{ transform: `scale(${dragonPop})`, zIndex: 38 }}><CloseUpDragon frame={frame} localFrame={frame - 965} /></AbsoluteFill>}
 
       <div style={{ position: 'absolute', top: 82, left: '50%', transform: 'translateX(-50%)', padding: '6px 18px', borderRadius: 20, backgroundColor: 'rgba(15, 23, 42, 0.82)', border: '2px solid rgba(250, 204, 21, 0.6)', fontFamily: 'sans-serif', fontSize: 22, fontWeight: 'bold', color: '#f8fafc', zIndex: 45 }}>@dysesat</div>
       <div style={{ position: 'absolute', top: 138, left: 85, right: 85, display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 45 }}>
