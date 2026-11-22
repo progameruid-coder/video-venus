@@ -60,12 +60,16 @@ export const CloseUpBattle: React.FC<{ frame: number; localFrame: number }> = ({
         </g>
 
         {/* PRAJURIT PENEMBAK MERIAM + MERIAM BESAR */}
-        <g transform="translate(92, 224)">
+        <g transform="translate(95, 224)">
           <rect x="-8" y="10" width="6" height="12" fill="#0f172a" /><rect x="2" y="10" width="6" height="12" fill="#0f172a" />
           <rect x="-10" y="-10" width="20" height="22" fill="#2563eb" stroke="#0f172a" strokeWidth="2" />
           <rect x="-8" y="-26" width="16" height="16" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
           <rect x="-9" y="-30" width="18" height="7" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.8" />
           <rect x="2" y="-20" width="3" height="3" fill="#0f172a" />
+          <rect x="7" y="-8" width="12" height="6" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x="17" y="-8" width="5" height="6" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="19" y="-17" width="3" height="10" fill="#78350f" />
+          <rect x="18" y="-22" width="5" height="6" fill={frame % 6 < 3 ? '#f97316' : '#fde047'} />
         </g>
         <g transform="translate(122, 210)">
           <rect x="-16" y="4" width="32" height="14" fill="#78350f" stroke="#0f172a" strokeWidth="2" />
@@ -121,7 +125,7 @@ export const CloseUpBattle: React.FC<{ frame: number; localFrame: number }> = ({
                     const ang = (k / 8) * Math.PI * 2;
                     return <rect key={k} x={Math.cos(ang) * a * 1.8 - 4} y={Math.sin(ang) * a * 1.8 - 4} width="8" height="8" fill={k % 2 === 0 ? '#fde047' : '#ffffff'} opacity={Math.max(0, 1 - a / 54)} />;
                   })}
-                  {dead && <g transform="translate(-54, -12)"><rect x="0" y="0" width="108" height="24" rx="5" fill="#0f172a" stroke="#facc15" strokeWidth="2.5" /><text x="12" y="15.5" fill="#fde047" fontSize="10" fontFamily="monospace" fontWeight="bold">NAGA KALAH!</text></g>}
+                  {dead && <g transform={`translate(-54, -12) scale(${1 + Math.sin(frame * 0.35) * 0.04})`}><rect x="0" y="0" width="108" height="24" rx="5" fill="#0f172a" stroke="#facc15" strokeWidth="2.5" /><text x="12" y="15.5" fill="#fde047" fontSize="10" fontFamily="monospace" fontWeight="bold">NAGA KALAH!</text>{Math.sin(frame * 0.5) > 0 ? <><rect x="-12" y="-8" width="5" height="5" fill="#fde047" /><rect x="112" y="18" width="5" height="5" fill="#ffffff" /></> : <><rect x="112" y="-8" width="5" height="5" fill="#fde047" /><rect x="-12" y="18" width="5" height="5" fill="#ffffff" /></>}</g>}
                 </>
               );
             })()}
@@ -166,12 +170,13 @@ export const CloseUpFinaleSplit: React.FC<{ frame: number; localFrame: number }>
         <g transform={`translate(66, ${234 - Math.abs(bob)})`}>
           <ellipse cx="0" cy={38 + Math.abs(bob)} rx="24" ry="6" fill="rgba(15,23,42,0.35)" />
           <rect x="-12" y="18" width="10" height="20" fill="#0f172a" /><rect x="2" y="18" width="10" height="20" fill="#0f172a" />
-          {/* Kedua Lengan Terangkat Memegang Pegangan Piala */}
-          <rect x="-24" y="-76" width="9" height="66" fill="#2563eb" stroke="#0f172a" strokeWidth="2" />
-          <rect x="15" y="-76" width="9" height="66" fill="#2563eb" stroke="#0f172a" strokeWidth="2" />
-          <rect x="-23" y="-84" width="10" height="10" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
-          <rect x="13" y="-84" width="10" height="10" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
-          {/* Badan, Kepala, Senyum Kemenangan & Mahkota */}
+          {/* Bahu & Lengan Menekuk Rapi Mengangkat Piala */}
+          <rect x="-28" y="-17" width="12" height="9" fill="#1d4ed8" stroke="#0f172a" strokeWidth="2" />
+          <rect x="16" y="-17" width="12" height="9" fill="#1d4ed8" stroke="#0f172a" strokeWidth="2" />
+          <rect x="-28" y="-73" width="9" height="60" fill="#2563eb" stroke="#0f172a" strokeWidth="2" />
+          <rect x="19" y="-73" width="9" height="60" fill="#2563eb" stroke="#0f172a" strokeWidth="2" />
+          <rect x="-24" y="-82" width="10" height="10" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
+          <rect x="14" y="-82" width="10" height="10" fill="#fed7aa" stroke="#0f172a" strokeWidth="2" />
           <rect x="-18" y="-18" width="36" height="38" fill="#0f172a" /><rect x="-15" y="-15" width="30" height="32" fill="#2563eb" />
           <rect x="-15" y="4" width="30" height="4" fill="#0f172a" /><rect x="-3" y="3" width="6" height="6" fill="#facc15" />
           <rect x="-16" y="-50" width="32" height="32" fill="#0f172a" /><rect x="-13" y="-47" width="26" height="26" fill="#fed7aa" />
@@ -179,15 +184,14 @@ export const CloseUpFinaleSplit: React.FC<{ frame: number; localFrame: number }>
           <rect x="-9" y="-39" width="5" height="5" fill="#0f172a" /><rect x="4" y="-39" width="5" height="5" fill="#0f172a" />
           <rect x="-8" y="-38" width="2" height="2" fill="#fff" /><rect x="5" y="-38" width="2" height="2" fill="#fff" />
           <rect x="-7" y="-29" width="14" height="6" fill="#7f1d1d" /><rect x="-5" y="-28" width="10" height="2.5" fill="#fff" />
-          <g transform="translate(0, -54)"><rect x="-13" y="-7" width="26" height="8" fill="#facc15" stroke="#0f172a" strokeWidth="1.5" /><rect x="-12" y="-12" width="6" height="6" fill="#fde047" /><rect x="-3" y="-14" width="6" height="8" fill="#fde047" /><rect x="6" y="-12" width="6" height="6" fill="#fde047" /></g>
-          {/* Piala Emas Jelas & Terpisah di Atas Mahkota */}
-          <g transform="translate(0, -96)">
-            <rect x="-17" y="4" width="6" height="10" fill="none" stroke="#eab308" strokeWidth="2.5" />
-            <rect x="11" y="4" width="6" height="10" fill="none" stroke="#eab308" strokeWidth="2.5" />
-            <rect x="-12" y="0" width="24" height="16" fill="#facc15" stroke="#0f172a" strokeWidth="2" />
-            <rect x="-8" y="3" width="6" height="10" fill="#fef08a" />
-            <rect x="-4" y="16" width="8" height="6" fill="#eab308" stroke="#0f172a" strokeWidth="1.5" />
-            <rect x="-10" y="21" width="20" height="6" fill="#ca8a04" stroke="#0f172a" strokeWidth="1.5" />
+          <g transform="translate(0, -54)"><rect x="-13" y="-7" width="26" height="8" fill="#facc15" stroke="#0f172a" strokeWidth="1.5" /><rect x="-12" y="-11" width="6" height="5" fill="#fde047" /><rect x="-3" y="-13" width="6" height="7" fill="#fde047" /><rect x="6" y="-11" width="6" height="5" fill="#fde047" /></g>
+          <g transform="translate(0, -90)">
+            <rect x="-17" y="4" width="6" height="9" fill="none" stroke="#eab308" strokeWidth="2.5" />
+            <rect x="11" y="4" width="6" height="9" fill="none" stroke="#eab308" strokeWidth="2.5" />
+            <rect x="-12" y="0" width="24" height="15" fill="#facc15" stroke="#0f172a" strokeWidth="2" />
+            <rect x="-8" y="3" width="6" height="9" fill="#fef08a" />
+            <rect x="-4" y="15" width="8" height="4" fill="#eab308" stroke="#0f172a" strokeWidth="1.5" />
+            <rect x="-10" y="19" width="20" height="4" fill="#ca8a04" stroke="#0f172a" strokeWidth="1.5" />
             {Math.sin(frame * 0.45) > 0 && <rect x="10" y="-6" width="5" height="5" fill="#ffffff" />}
           </g>
         </g>
@@ -212,22 +216,25 @@ export const CloseUpFinaleSplit: React.FC<{ frame: number; localFrame: number }>
           <rect x="-4" y="-28" width="8" height="18" fill="#a16207" />
           {Math.sin(frame * 0.4) > 0 && <rect x="10" y="-48" width="6" height="6" fill="#ffffff" />}
         </g>
-        {/* LEADER UDIN GOSONG BANGGA MEMELUK PATUNG EMAS */}
-        <g transform={`translate(154, ${234 + bob * 0.4})`}>
+        {/* Puing Gubuk Gosong & Bara Kecil di Latar Kanan */}
+        <polygon points="128,168 142,155 156,168" fill="#1c1917" stroke="#0f172a" strokeWidth="1.5" />
+        <rect x="137" y="164" width="4" height="4" fill={frame % 8 < 4 ? '#f97316' : '#fde047'} />
+        {/* LEADER UDIN GOSONG BANGGA MEMELUK PATUNG EMAS (PAS 2 TANGAN!) */}
+        <g transform={`translate(160, ${234 + bob * 0.4})`}>
           <ellipse cx="0" cy={38 - bob * 0.4} rx="22" ry="6" fill="rgba(15,23,42,0.45)" />
+          {/* Tangan Kanan (Belakang): Memeluk Sisi Belakang Patung */}
+          <rect x="12" y="-15" width="9" height="9" fill="#991b1b" stroke="#0f172a" strokeWidth="1.8" />
           <rect x="-11" y="18" width="9" height="20" fill="#0f172a" /><rect x="2" y="18" width="9" height="20" fill="#0f172a" />
-          <rect x="-24" y="-12" width="9" height="22" fill="#b91c1c" stroke="#0f172a" strokeWidth="1.8" />
-          <rect x="-23" y="8" width="8" height="8" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.8" />
           <rect x="-17" y="-18" width="34" height="38" fill="#0f172a" /><rect x="-14" y="-15" width="28" height="32" fill="#dc2626" />
-          <rect x="-6" y="-4" width="9" height="7" fill="#1c1917" opacity="0.5" />
-          {/* Tangan Memeluk Patung Emas */}
-          <rect x="12" y="-10" width="26" height="9" fill="#dc2626" stroke="#0f172a" strokeWidth="1.8" />
-          <rect x="34" y="-10" width="9" height="9" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.8" />
-          <rect x="12" y="4" width="22" height="8" fill="#b91c1c" stroke="#0f172a" strokeWidth="1.8" />
+          <rect x="-6" y="-12" width="8" height="6" fill="#1c1917" opacity="0.45" />
+          {/* Tangan Kiri (Depan): Menekuk dari Bahu Kiri Melintasi Dada Memeluk Patung */}
+          <rect x="-19" y="-14" width="9" height="19" fill="#dc2626" stroke="#0f172a" strokeWidth="2" />
+          <rect x="-19" y="-3" width="50" height="9" fill="#dc2626" stroke="#0f172a" strokeWidth="2" />
+          <rect x="-17" y="-11" width="5" height="9" fill="#dc2626" />
+          <rect x="29" y="-3" width="9" height="9" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.8" />
           <rect x="-15" y="-50" width="30" height="32" fill="#0f172a" /><rect x="-12" y="-47" width="24" height="26" fill="#fed7aa" />
           <rect x="-14" y="-54" width="28" height="10" fill="#29150b" stroke="#0f172a" strokeWidth="1.5" />
           <rect x="-9" y="-33" width="6" height="4" fill="#1c1917" opacity="0.45" />
-          {/* Mata Berbinar Bangga */}
           <rect x="-9" y="-42" width="6" height="6" fill="#0f172a" /><rect x="3" y="-42" width="6" height="6" fill="#0f172a" />
           <rect x="-8" y="-41" width="2.5" height="2.5" fill="#fde047" /><rect x="4" y="-41" width="2.5" height="2.5" fill="#fde047" />
           <rect x="-7" y="-29" width="14" height="6" fill="#7f1d1d" /><rect x="-5" y="-28" width="10" height="2.5" fill="#fff" />

@@ -171,11 +171,11 @@ export const WorldBoxEp4: React.FC = () => {
   const sec = frame / fps;
 
   const year = Math.min(50, Math.floor(interpolate(frame, [0, 265, 595, 655], [39, 42, 46, 50.9], { extrapolateRight: 'clamp' })));
-  const smartPop = frame < 270 ? 248 : frame < 410 ? Math.floor(interpolate(frame, [270, 405], [248, 215], { extrapolateRight: 'clamp' })) : Math.floor(interpolate(frame, [595, 690], [215, 310], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+  const smartPop = frame < 256 ? 248 : frame < 410 ? Math.floor(interpolate(frame, [256, 405], [248, 215], { extrapolateRight: 'clamp' })) : Math.floor(interpolate(frame, [595, 690], [215, 310], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
   const dumbPop = frame < 235 ? Math.floor(interpolate(frame, [0, 230], [51, 18], { extrapolateRight: 'clamp' })) : Math.floor(interpolate(frame, [235, 750], [18, 12], { extrapolateRight: 'clamp' }));
 
-  const dragonOnDumb = frame < 268;
-  const dragonOnSmart = frame >= 270 && frame < 408;
+  const dragonOnDumb = frame < 258;
+  const dragonOnSmart = frame >= 256 && frame < 408;
   const celebration = frame >= 615;
   const quake = (frame < 120 || dragonOnSmart) ? Math.sin(frame * 2.1) * 2.5 : 0;
 
@@ -240,15 +240,15 @@ export const WorldBoxEp4: React.FC = () => {
           <SvgHouse4 x={220} y={134} roof="#475569" />
           <SvgCastle4 x={176} y={136} frame={frame} />
           {celebration && <SvgLighthouse x={356} y={178} scale={spring({ frame: frame - 615, fps, config: { damping: 10 } })} frame={frame} />}
-          <SvgCannon4 x={152} y={208} frame={frame} offset={0} fireUp={dragonOnSmart} tx={interpolate(frame, [270, 340, 405], [220, 175, 215])} ty={interpolate(frame, [270, 320, 405], [220, 115, 102])} />
-          <SvgCannon4 x={302} y={208} frame={frame} offset={12} fireUp={dragonOnSmart} tx={interpolate(frame, [270, 340, 405], [220, 175, 215])} ty={interpolate(frame, [270, 320, 405], [220, 115, 102])} />
+          <SvgCannon4 x={152} y={208} frame={frame} offset={0} fireUp={dragonOnSmart} tx={interpolate(frame, [256, 340, 405], [315, 165, 225])} ty={interpolate(frame, [256, 320, 405], [240, 112, 100])} />
+          <SvgCannon4 x={302} y={208} frame={frame} offset={12} fireUp={dragonOnSmart} tx={interpolate(frame, [256, 340, 405], [315, 165, 225])} ty={interpolate(frame, [256, 320, 405], [240, 112, 100])} />
           <rect x="210" y="198" width="24" height="24" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
           <SvgWarship4 x={268} y={226} frame={frame} flip />
           {celebration && <SvgWarship4 x={112} y={224} frame={frame + 14} />}
           {dragonOnSmart && [[146, 128], [202, 118]].map(([fx, fy], i) => <g key={i} transform={`translate(${fx}, ${fy})`}><rect x="-6" y="-8" width="12" height="9" fill="#ef4444" /><rect x="-4" y="-11" width="8" height="8" fill="#f97316" /><rect x="-2" y="-7" width="4" height="5" fill="#fde047" /></g>)}
           {SMART_CITIZENS.map((c) => { const p = walkP(SMART_PATHS[c.pathIdx], c.offset + frame * c.speed); return <SvgCitizen4 key={c.id} x={p.x + c.jx} y={p.y + c.jy} shirt="#2563eb" step={frame * 0.38 + c.id} flip={p.flip} bubble={dragonOnSmart && c.id % 6 === 0 ? 'cannon' : celebration && c.id % 7 === 0 ? 'trophy' : undefined} />; })}
           {(() => { const bp = walkP([[192, 113], [248, 113], [248, 152], [192, 152]], frame * 0.003); return <SvgCitizen4 x={bp.x} y={bp.y} shirt="#1e40af" step={frame * 0.3} flip={bp.flip} isLeader bubble={celebration ? 'trophy' : 'cannon'} />; })()}
-          {dragonOnSmart && <SvgDragonMap4 x={interpolate(frame, [270, 340, 405], [220, 175, 215])} y={interpolate(frame, [270, 320, 405], [250, 115, 102])} frame={frame} flip={frame > 340} />}
+          {dragonOnSmart && <SvgDragonMap4 x={interpolate(frame, [256, 340, 405], [315, 165, 225])} y={interpolate(frame, [256, 320, 405], [256, 112, 100])} frame={frame} flip={frame <= 340} />}
           {celebration && <><SvgFwBurst x={76} y={44} frame={frame} color="#fde047" /><SvgFwBurst x={364} y={42} frame={frame + 16} color="#38bdf8" /><SvgFwBurst x={386} y={118} frame={frame + 8} color="#f472b6" /></>}
         </svg>
       </div>
@@ -283,7 +283,7 @@ export const WorldBoxEp4: React.FC = () => {
             return <SvgCitizen4 key={c.id} x={px} y={py} shirt="#dc2626" step={frame * 0.7 + c.id} flip={t >= 1} bubble={c.id % 4 === 0 ? 'panic' : undefined} />;
           })}
           <SvgCitizen4 x={196} y={144} shirt="#991b1b" step={frame * 0.45} isLeader bubble={frame < 260 ? 'panic' : 'gold'} />
-          {dragonOnDumb && <SvgDragonMap4 x={interpolate(frame, [0, 145, 268], [135, 285, 220])} y={interpolate(frame, [0, 145, 268], [110, 152, -28])} frame={frame} flip={frame > 145} />}
+          {dragonOnDumb && <SvgDragonMap4 x={interpolate(frame, [0, 140, 258], [135, 285, 318])} y={interpolate(frame, [0, 140, 258], [110, 152, -24])} frame={frame} flip={false} />}
         </svg>
       </div>
       {!cutActive && !showWinner && <div style={{ position: 'absolute', top: 1370, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#0f172a', border: '3px solid #f87171', borderRadius: 12, padding: '6px 18px', fontFamily, fontSize: 15, color: '#f87171', zIndex: 25 }}>PULAU BODOH • {dumbPop}</div>}
