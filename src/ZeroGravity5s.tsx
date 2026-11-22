@@ -44,19 +44,36 @@ const PixelBakso: React.FC<{ x: number; y: number; rot: number; floatT: number; 
   </g>
 );
 const PixelPerson: React.FC<{ x: number; y: number; shirt: string; rot: number; panic: boolean; dizzy: boolean; frame: number; bubble?: '?' | '!' }> = ({ x, y, shirt, rot, panic, dizzy, frame, bubble }) => {
-  const fl = panic ? Math.sin(frame * 0.7) * 18 : 0;
+  const fl = panic ? Math.sin(frame * 0.72) * 20 : 0;
   return (
     <g transform={`translate(${x}, ${y}) rotate(${rot})`}>
-      <rect x="-5" y="4" width="4" height="8" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1" />
-      <rect x="1" y="4" width="4" height="8" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1" />
-      <g transform={`translate(-7, -6) rotate(${panic ? -125 + fl : 0})`}><rect x="-3" y="0" width="4" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1" /></g>
-      <g transform={`translate(7, -6) rotate(${panic ? 125 - fl : 0})`}><rect x="-1" y="0" width="4" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1" /></g>
+      {dizzy ? (
+        <>
+          <rect x="-11" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="2" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+        </>
+      ) : (
+        <>
+          <g transform={`translate(-3, 4) rotate(${panic ? 18 + fl * 0.85 : 0})`}><rect x="-2" y="0" width="4" height="9" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></g>
+          <g transform={`translate(3, 4) rotate(${panic ? -18 - fl * 0.85 : 0})`}><rect x="-2" y="0" width="4" height="9" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></g>
+        </>
+      )}
       <rect x="-7" y="-8" width="14" height="13" fill={shirt} stroke="#0f172a" strokeWidth="1.4" />
+      {/* Lengan Kiri & Kanan: Terlihat Jelas Melambai Keluar-Atas Saat 0G! */}
+      <g transform={`translate(-7, -6) rotate(${panic ? 132 + fl : dizzy ? 155 : 0})`}>
+        <rect x="-2.5" y="0" width="4.5" height="8.5" fill={shirt} stroke="#0f172a" strokeWidth="1.2" />
+        <rect x="-2.5" y="7.5" width="4.5" height="3.5" fill="#fed7aa" stroke="#0f172a" strokeWidth="1" />
+      </g>
+      <g transform={`translate(7, -6) rotate(${panic ? -132 - fl : dizzy ? -155 : 0})`}>
+        <rect x="-2" y="0" width="4.5" height="8.5" fill={shirt} stroke="#0f172a" strokeWidth="1.2" />
+        <rect x="-2" y="7.5" width="4.5" height="3.5" fill="#fed7aa" stroke="#0f172a" strokeWidth="1" />
+      </g>
       <rect x="-6" y="-19" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.4" />
       <rect x="-6" y="-21" width="12" height="4" fill="#29150b" />
       <rect x="-3" y="-15" width="2" height="2" fill="#0f172a" /><rect x="2" y="-15" width="2" height="2" fill="#0f172a" />
+      {panic && <rect x="-2" y="-11" width="4" height="2.5" fill="#7f1d1d" />}
       {bubble && (
-        <g transform="translate(8, -32)">
+        <g transform="translate(10, -34)">
           <rect x="0" y="0" width="12" height="12" rx="2" fill="#fff" stroke="#0f172a" strokeWidth="1.2" />
           <text x="3.5" y="9" fill={bubble === '!' ? '#dc2626' : '#0f172a'} fontSize="9" fontFamily="monospace" fontWeight="bold">{bubble}</text>
         </g>
@@ -80,42 +97,49 @@ export const ZeroGravity5s: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const sec = frame / fps;
-  const { tAlarm, tSec1, tSec2, tSec3, tSec4, tSec5, tCrash, tDropEnd, tCutStart, tCutEnd, cliffFrame } = GRAV_TIMING;
+  const { tAlarm, tSec1, tSec3, tCrash, tDropEnd, tCutStart, tCutEnd, cliffFrame } = GRAV_TIMING;
 
-  const isZeroG = frame >= tSec1 && frame < tCrash;
+  // Bagi timer 1-5 proporsional agar setiap angka terlihat jelas & sinkron narasi
+  const d1 = tSec1;
+  const d2 = Math.round((tSec1 + tSec3) / 2);
+  const d3 = tSec3;
+  const d4 = Math.round(tSec3 + (tCrash - tSec3) * 0.42);
+  const d5 = Math.max(d4 + 35, tCrash - 52);
+
+  const isZeroG = frame >= d1 && frame < tCrash;
   const isDropping = frame >= tCrash && frame < tDropEnd;
   const isCrashed = frame >= tDropEnd;
 
   const dropT = isDropping ? Math.pow(interpolate(frame, [tCrash, tDropEnd], [0, 1], { extrapolateRight: 'clamp' }), 2) : 0;
-  const lift = isZeroG ? interpolate(frame, [tSec1, tCrash], [0, 1], { extrapolateRight: 'clamp' }) : isDropping ? 1 - dropT : 0;
-  const liftLate = isZeroG ? interpolate(frame, [tSec3, tCrash], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : isDropping ? 1 - dropT : 0;
+  const lift = isZeroG ? interpolate(frame, [d1, tCrash], [0, 1], { extrapolateRight: 'clamp' }) : isDropping ? 1 - dropT : 0;
+  const liftLate = isZeroG ? interpolate(frame, [d3, tCrash], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : isDropping ? 1 - dropT : 0;
+  const liftRoof = isZeroG ? interpolate(frame, [d2 + 20, tCrash], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : isDropping ? 1 - dropT : 0;
+  const grabT = isZeroG ? interpolate(frame, [d1, d1 + 14], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : isDropping ? 1 : 0;
 
-  const timerLabel = frame >= tSec1 && frame < tSec2 ? '1' : frame >= tSec2 && frame < tSec3 ? '2' : frame >= tSec3 && frame < tSec4 ? '3' : frame >= tSec4 && frame < tSec5 ? '4' : frame >= tSec5 && frame < tCrash ? '5' : frame >= tCrash && frame < tDropEnd + 16 ? 'BRAK!' : null;
+  const timerLabel = frame >= d1 && frame < d2 ? '1' : frame >= d2 && frame < d3 ? '2' : frame >= d3 && frame < d4 ? '3' : frame >= d4 && frame < d5 ? '4' : frame >= d5 && frame < tCrash ? '5' : frame >= tCrash && frame < tDropEnd + 18 ? 'BRAK!' : null;
   const shake = frame >= tDropEnd - 2 && frame < tDropEnd + 32 ? Math.sin(frame * 2.8) * (tDropEnd + 32 - frame) * 0.36 : 0;
 
   const showCut = frame >= tCutStart && frame <= tCutEnd;
   const cutPop = showCut ? spring({ frame: frame - tCutStart, fps, config: { damping: 12 } }) : 0;
-
   const showCliff = frame >= cliffFrame;
   const cliffIn = showCliff ? spring({ frame: frame - cliffFrame, fps, config: { damping: 10 } }) : 0;
   const activeIdx = WORD_SUBS_GRAV5S.findIndex((x) => sec >= x.s && sec < x.e);
   const activeWord = activeIdx >= 0 ? WORD_SUBS_GRAV5S[activeIdx] : null;
   const wordPop = activeWord ? spring({ frame: Math.max(0, frame - Math.floor(activeWord.s * fps)), fps, config: { damping: 11, stiffness: 280, mass: 0.5 } }) : 0;
 
-  // Mobil mulus tanpa teleport saat 0G mulai
-  const dCar = tSec1 - Math.min(frame, tSec1);
+  const dCar = d1 - Math.min(frame, d1);
   const car1X = 15 + (((82 - dCar * 0.68) % 240) + 240) % 240;
   const taxiX = 15 + (((178 + dCar * 0.72) % 240) + 240) % 240;
-  // Kucing melayang lalu jatuh mulus tepat ke kepala Si Udin
-  const catX = isZeroG ? interpolate(lift, [0, 1], [192, 96]) : isDropping ? interpolate(dropT, [0, 1], [96, 56]) : isCrashed ? 56 : 192;
-  const catY = isZeroG ? interpolate(lift, [0, 1], [310, 128]) : isDropping ? interpolate(dropT, [0, 1], [128, 250]) : isCrashed ? 250 : 310;
+  const catX = isZeroG ? interpolate(lift, [0, 1], [196, 118]) : isDropping ? interpolate(dropT, [0, 1], [118, 64]) : isCrashed ? 64 : 196;
+  const catY = isZeroG ? interpolate(lift, [0, 1], [306, 86]) : isDropping ? interpolate(dropT, [0, 1], [86, 267]) : isCrashed ? 267 : 306;
+
   return (
     <AbsoluteFill style={{ backgroundColor: '#0f172a', overflow: 'hidden', transform: `translate(${shake}px, ${-shake * 0.6}px)` }}>
       <Audio src={staticFile('vo_grav_5s.mp3')} volume={1} />
       <Audio src={staticFile('bgm_grav_5s.wav')} volume={0.21} />
       <Sequence from={tAlarm} durationInFrames={28}><Audio src={staticFile('sfx_grav_alarm.wav')} volume={0.26} /></Sequence>
-      <Sequence from={tSec1} durationInFrames={36}><Audio src={staticFile('sfx_grav_float.wav')} volume={0.32} /></Sequence>
-      {[tSec1, tSec2, tSec3, tSec4, tSec5].map((fr) => <Sequence key={`tk-${fr}`} from={fr} durationInFrames={10}><Audio src={staticFile('sfx_grav_tick.wav')} volume={0.25} /></Sequence>)}
+      <Sequence from={d1} durationInFrames={36}><Audio src={staticFile('sfx_grav_float.wav')} volume={0.32} /></Sequence>
+      {[d1, d2, d3, d4, d5].map((fr) => <Sequence key={`tk-${fr}`} from={fr} durationInFrames={10}><Audio src={staticFile('sfx_grav_tick.wav')} volume={0.25} /></Sequence>)}
       <Sequence from={tDropEnd - 3} durationInFrames={36}><Audio src={staticFile('sfx_grav_crash.wav')} volume={0.46} /></Sequence>
       <Sequence from={tCutStart} durationInFrames={30}><Audio src={whoosh} volume={0.36} /></Sequence>
       <Sequence from={tCutStart + 12} durationInFrames={28}><Audio src={staticFile('sfx_grav_dizzy.wav')} volume={0.26} /></Sequence>
@@ -131,16 +155,17 @@ export const ZeroGravity5s: React.FC = () => {
           <rect x={(20 + frame * 0.16) % 290 - 20} y="24" width="44" height="12" fill="#f0f9ff" opacity="0.9" />
           <rect x={(160 + frame * 0.12) % 290 - 20} y="42" width="52" height="13" fill="#e0f2fe" opacity="0.85" />
           <rect x="78" y="108" width="28" height="72" fill="#1e40af" opacity="0.55" /><rect x="114" y="96" width="34" height="84" fill="#1e3a8a" opacity="0.55" /><rect x="156" y="114" width="26" height="66" fill="#1e40af" opacity="0.55" />
-
           {isZeroG && [0, 1, 2, 3, 4, 5, 6, 7].map((i) => <rect key={i} x={18 + i * 33} y={310 - ((frame * 3.8 + i * 44) % 290)} width="2.5" height="14" fill="#fef08a" opacity="0.55" />)}
 
-          {/* Trotoar Atas, Jalan Raya & Trotoar Bawah (Bebas Tabrakan Taksi & Bakso!) */}
           <rect y="175" width="270" height="34" fill="#cbd5e1" /><rect y="209" width="270" height="78" fill="#334155" />
           <rect y="207" width="270" height="4" fill="#94a3b8" /><rect y="287" width="270" height="43" fill="#cbd5e1" /><rect y="285" width="270" height="4" fill="#94a3b8" />
           {[14, 58, 102, 146, 190, 234].map((mx) => <rect key={mx} x={mx} y="246" width="24" height="5" fill="#fde047" />)}
 
+          {/* Gedung Kiri + 2 Genteng Kecil Terlepas Saat 0G */}
           <rect x="4" y="64" width="56" height="126" fill="#9a3412" stroke="#0f172a" strokeWidth="2" />
           <rect x="2" y="58" width="60" height="8" fill="#7c2d12" stroke="#0f172a" strokeWidth="1.8" />
+          <g transform={`translate(${18 + liftLate * 10}, ${56 - liftLate * 46}) rotate(${liftLate * 35})`}><rect x="-7" y="-2" width="14" height="5" fill="#b45309" stroke="#0f172a" strokeWidth="1.2" /></g>
+          <g transform={`translate(${44 + liftLate * 16}, ${56 - liftLate * 54}) rotate(${-liftLate * 42})`}><rect x="-6" y="-2" width="12" height="5" fill="#9a3412" stroke="#0f172a" strokeWidth="1.2" /></g>
           {[76, 106, 136].map((wy) => <g key={wy}><rect x="14" y={wy} width="14" height="16" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.5" /><rect x="36" y={wy} width="14" height="16" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.5" /></g>)}
           <rect x="74" y="156" width="8" height="28" fill="#78350f" /><rect x="61" y="132" width="34" height="28" fill="#15803d" stroke="#0f172a" strokeWidth="1.6" /><rect x="66" y="122" width="24" height="14" fill="#22c55e" />
 
@@ -153,18 +178,29 @@ export const ZeroGravity5s: React.FC = () => {
               <rect key={idx} x={dx + Math.sin(frame * 0.2 + idx) * 3} y={dy - lift * (68 + idx * 8)} width="5" height="5" rx="2" fill={idx % 2 === 0 ? '#7dd3fc' : '#e0f2fe'} />
             ))}
           </g>
-          <rect x="206" y="88" width="60" height="104" fill="#b45309" stroke="#0f172a" strokeWidth="2" />
-          <rect x="216" y="102" width="16" height="18" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.5" />
-          <rect x="240" y="102" width="16" height="18" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.5" />
-          {[0, 1, 2, 3, 4].map((s) => <rect key={s} x={204 + s * 12} y="138" width="12" height="10" fill={s % 2 === 0 ? '#dc2626' : '#f8fafc'} stroke="#0f172a" strokeWidth="1" />)}
-          <rect x="220" y="156" width="26" height="36" fill="#1e293b" stroke="#0f172a" strokeWidth="1.6" />
-          {/* Atap Seng Terbang -> Jatuh Miring Rusak di Tepi Atap */}
-          <g transform={`translate(${isCrashed ? 224 : 236 - liftLate * 24}, ${isCrashed ? 88 : 82 - liftLate * 72}) rotate(${isCrashed ? -19 : -liftLate * 28})`}>
-            <rect x="-32" y="-4" width="64" height="8" fill="#64748b" stroke="#0f172a" strokeWidth="1.6" />
-            <rect x="-26" y="-2" width="52" height="3" fill="#94a3b8" />
-          </g>
+          {/* RUMAH KANAN: RANGKA KAYU TERBUKA + 3 LEMBAR ATAP SENG TERBANG BERPISAH! */}
+          <rect x="206" y="96" width="60" height="96" fill="#b45309" stroke="#0f172a" strokeWidth="2" />
+          {/* Loteng & Rangka Kayu (Terlihat Menganga Saat Atap Seng Terangkat!) */}
+          <rect x="208" y="88" width="56" height="10" fill="#1e293b" stroke="#0f172a" strokeWidth="1.5" />
+          {[218, 234, 250].map((rx) => <rect key={rx} x={rx} y="88" width="4" height="10" fill="#78350f" />)}
+          <rect x="216" y="106" width="16" height="17" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x="240" y="106" width="16" height="17" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.5" />
+          {[0, 1, 2, 3, 4].map((s) => <rect key={s} x={204 + s * 12} y="140" width="12" height="10" fill={s % 2 === 0 ? '#dc2626' : '#f8fafc'} stroke="#0f172a" strokeWidth="1" />)}
+          <rect x="220" y="158" width="26" height="34" fill="#1e293b" stroke="#0f172a" strokeWidth="1.6" />
+          {/* 3 Panel Atap Seng Bergelombang yang Terbang Tinggi & Jatuh Miring */}
+          {[
+            { bx: 215, by: 87, dx: -26, dy: -66, r0: -32, cx: 212, cy: 90, rc: -22 },
+            { bx: 236, by: 85, dx: -12, dy: -76, r0: 18, cx: 238, cy: 91, rc: 15 },
+            { bx: 256, by: 87, dx: -6, dy: -56, r0: 36, cx: 254, cy: 134, rc: 28 },
+          ].map((sh, i) => (
+            <g key={i} transform={`translate(${isCrashed ? sh.cx : sh.bx + liftRoof * sh.dx}, ${isCrashed ? sh.cy : sh.by + liftRoof * sh.dy}) rotate(${isCrashed ? sh.rc : liftRoof * sh.r0})`}>
+              <rect x="-12" y="-5" width="24" height="10" fill="#64748b" stroke="#0f172a" strokeWidth="1.6" />
+              <rect x="-10" y="-3" width="20" height="3" fill="#cbd5e1" />
+              <rect x="-10" y="1" width="20" height="2" fill="#475569" />
+            </g>
+          ))}
 
-          {/* Tempat Sampah Jatuh Terguling di Trotoar (Jauh dari Warga Ungu) */}
+          {/* Tempat Sampah Jatuh Terguling di Trotoar */}
           <g transform={`translate(${isCrashed ? 168 : 174 - liftLate * 12}, ${isCrashed ? 200 : 194 - liftLate * 92}) rotate(${isCrashed ? 86 : liftLate * 48})`}>
             <rect x="-7" y="-10" width="14" height="16" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
             <rect x="-9" y="-13" width="18" height="4" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.2" />
@@ -174,31 +210,56 @@ export const ZeroGravity5s: React.FC = () => {
           <PixelCar x={car1X} y={230 - lift * 92} color="#2563eb" roof="#3b82f6" rot={isZeroG ? -16 * lift : isCrashed ? -9 : 0} crashed={isCrashed} frame={frame} />
           <PixelCar x={taxiX} y={264 - lift * 100} color="#eab308" roof="#facc15" rot={isZeroG ? 18 * lift : isCrashed ? 12 : 0} taxi crashed={isCrashed} frame={frame} />
 
-          {/* Gerobak Bakso di Trotoar Bawah -> Terbalik Rapi Saat Jatuh */}
-          <PixelBakso x={144} y={302 - liftLate * 96 + (isCrashed ? 4 : 0)} rot={isZeroG ? -24 * liftLate : isCrashed ? 165 : 0} floatT={liftLate} crashed={isCrashed} frame={frame} />
-          {(liftLate > 0.05 || isCrashed) && [[-20, -28], [16, -34], [-6, -42], [22, -16]].map(([bx, by], i) => (
-            <rect key={i} x={144 + bx + (isCrashed ? i * 6 : 0)} y={isCrashed ? 316 : 284 + by - liftLate * (92 + i * 10)} width="6" height="6" rx="2" fill={i % 2 === 0 ? '#92400e' : '#f8fafc'} stroke="#0f172a" strokeWidth="1" />
+          {/* Gerobak Bakso Utuh di Dalam Frame (Terguling Menyamping Saat Jatuh) */}
+          <PixelBakso x={144} y={298 - liftLate * 94} rot={isZeroG ? -24 * liftLate : isCrashed ? -96 : 0} floatT={liftLate} crashed={isCrashed} frame={frame} />
+          {(liftLate > 0.05 || isCrashed) && [[-18, -28], [18, -32], [-6, -40], [24, -18]].map(([bx, by], i) => (
+            <rect key={i} x={isCrashed ? 112 + i * 18 : 144 + bx} y={isCrashed ? 314 + (i % 2) * 4 : 284 + by - liftLate * (92 + i * 10)} width="6" height="6" rx="2" fill={i % 2 === 0 ? '#92400e' : '#f8fafc'} stroke="#0f172a" strokeWidth="1" />
           ))}
 
-          <PixelPerson x={86} y={196 - lift * 106 + (isCrashed ? 6 : 0)} shirt="#16a34a" rot={isZeroG ? -22 * lift : 0} panic={isZeroG} dizzy={isCrashed} frame={frame} bubble={isZeroG ? '?' : undefined} />
-          <PixelPerson x={210} y={198 - lift * 112 + (isCrashed ? 6 : 0)} shirt="#9333ea" rot={isZeroG ? 25 * lift : 0} panic={isZeroG} dizzy={isCrashed} frame={frame + 7} bubble={isZeroG ? '!' : undefined} />
+          <PixelPerson x={86} y={196 - lift * 104 + (isCrashed ? 8 : 0)} shirt="#16a34a" rot={isZeroG ? -18 * lift : 0} panic={isZeroG} dizzy={isCrashed} frame={frame} bubble={isZeroG ? '?' : undefined} />
+          <PixelPerson x={208} y={198 - lift * 108 + (isCrashed ? 8 : 0)} shirt="#9333ea" rot={isZeroG ? 20 * lift : 0} panic={isZeroG} dizzy={isCrashed} frame={frame + 7} bubble={isZeroG ? '!' : undefined} />
 
-          {/* Tiang Lampu Kokoh + SI UDIN MENCENGKERAM TIANG (POROS ROTASI DI TANGAN!) */}
+          {/* TIANG LAMPU KOKOH */}
           <rect x="44" y="138" width="6" height="164" fill="#334155" stroke="#0f172a" strokeWidth="1.6" />
           <rect x="38" y="296" width="18" height="8" fill="#1e293b" stroke="#0f172a" strokeWidth="1.5" />
           <rect x="39" y="124" width="16" height="16" fill="#fde047" stroke="#0f172a" strokeWidth="1.6" />
           <polygon points="36,124 47,115 58,124" fill="#1e293b" />
-          <g transform={`translate(47, ${278 - lift * 36}) rotate(${-66 * lift})`}>
-            <g transform={`translate(9, 10) rotate(${isZeroG ? Math.sin(frame * 0.85) * 16 : 0})`}><rect x="-2" y="0" width="4" height="11" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1" /></g>
-            <g transform={`translate(14, 10) rotate(${isZeroG ? -Math.sin(frame * 0.85) * 16 : 0})`}><rect x="-2" y="0" width="4" height="11" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1" /></g>
-            <rect x="4" y="-3" width="13" height="14" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
-            <rect x="-3" y="-2" width="10" height="5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" />
-            <rect x="-3" y="4" width="10" height="5" fill="#b91c1c" stroke="#0f172a" strokeWidth="1.2" />
-            <rect x="5" y="-14" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.4" />
-            <rect x="5" y="-16" width="12" height="4" fill="#29150b" />
-            <rect x="7" y="-10" width="2" height="2" fill="#0f172a" /><rect x="12" y="-10" width="2" height="2" fill="#0f172a" />
-            {isCrashed && [0, 1, 2].map((i) => <rect key={i} x={11 + Math.cos(frame * 0.2 + i * 2.1) * 11 - 2} y={-24 + Math.sin(frame * 0.2 + i * 2.1) * 3} width="4" height="4" fill="#fde047" />)}
-          </g>
+
+          {/* SI UDIN: Berdiri Santai (Normal) -> Meraih & Pegangan Tiang (0G) -> Duduk Pusing (Jatuh) */}
+          {!isZeroG && !isDropping ? (
+            <g transform={`translate(64, ${isCrashed ? 292 : 289})`}>
+              {isCrashed ? (
+                <>
+                  <rect x="-11" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+                  <rect x="2" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+                </>
+              ) : (
+                <>
+                  <rect x="-5" y="4" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+                  <rect x="1" y="4" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+                </>
+              )}
+              <rect x="-7" y="-8" width="14" height="13" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
+              <g transform={`translate(-7, -6) rotate(${isCrashed ? 152 : 0})`}><rect x="-2.5" y="0" width="4.5" height="8.5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2.5" y="7.5" width="4.5" height="3.5" fill="#fed7aa" stroke="#0f172a" strokeWidth="1" /></g>
+              <g transform={`translate(7, -6) rotate(${isCrashed ? -152 : 0})`}><rect x="-2" y="0" width="4.5" height="8.5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2" y="7.5" width="4.5" height="3.5" fill="#fed7aa" stroke="#0f172a" strokeWidth="1" /></g>
+              <rect x="-6" y="-19" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.4" />
+              <rect x="-6" y="-21" width="12" height="4" fill="#29150b" />
+              <rect x="-3" y="-15" width="2" height="2" fill="#0f172a" /><rect x="2" y="-15" width="2" height="2" fill="#0f172a" />
+              {isCrashed && [0, 1, 2].map((i) => <rect key={i} x={Math.cos(frame * 0.2 + i * 2.1) * 12 - 2} y={-40 + Math.sin(frame * 0.2 + i * 2.1) * 3} width="4" height="4" fill="#fde047" />)}
+            </g>
+          ) : (
+            <g transform={`translate(${47 + (1 - grabT) * 15}, ${282 - lift * 36}) rotate(${-52 * lift})`}>
+              <g transform={`translate(10, 10) rotate(${Math.sin(frame * 0.85) * 18})`}><rect x="-2" y="0" width="4" height="11" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></g>
+              <g transform={`translate(15, 10) rotate(${-Math.sin(frame * 0.85) * 18})`}><rect x="-2" y="0" width="4" height="11" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></g>
+              <rect x="6" y="-3" width="13" height="14" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
+              <rect x="-3" y="-2" width="11" height="5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" />
+              <rect x="-3" y="4" width="11" height="5" fill="#b91c1c" stroke="#0f172a" strokeWidth="1.2" />
+              <rect x="-3" y="-2" width="4" height="5" fill="#fed7aa" stroke="#0f172a" strokeWidth="1" />
+              <rect x="6" y="-14" width="12" height="11" fill="#fed7aa" stroke="#0f172a" strokeWidth="1.4" />
+              <rect x="6" y="-16" width="12" height="4" fill="#29150b" />
+              <rect x="8" y="-10" width="2" height="2" fill="#0f172a" /><rect x="13" y="-10" width="2" height="2" fill="#0f172a" />
+            </g>
+          )}
 
           <PixelCat x={catX} y={catY} rot={isZeroG ? -18 * lift : 0} panic={isZeroG} />
 
