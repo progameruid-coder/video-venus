@@ -239,7 +239,7 @@ export const WorldBoxEp3: React.FC = () => {
           {hasCannons && <><SvgCannon x={152} y={208} scale={spring({ frame: frame - 685, fps, config: { damping: 10 } })} frame={frame} offset={0} /><SvgCannon x={302} y={208} scale={spring({ frame: frame - 700, fps, config: { damping: 10 } })} frame={frame} offset={35} /></>}
           <rect x="210" y="198" width="24" height="24" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
           {frame < 55 && <SvgWarship3 x={265 + frame * 3.1} y={226 + frame * 0.3} frame={frame} />}
-          {frame >= 560 && <SvgWarship3 x={interpolate(frame, [560, 635], [405, 258], { extrapolateRight: 'clamp' })} y={226} frame={frame} goldCargo flip={frame < 635} />}{frame >= 630 && <g transform="translate(215, 206)"><rect x="0" y="0" width="9" height="6" fill="#facc15" stroke="#0f172a" strokeWidth="1" /><rect x="6" y="-4" width="8" height="5" fill="#fde047" stroke="#0f172a" strokeWidth="1" /></g>}
+          {frame >= 560 && <SvgWarship3 x={interpolate(frame, [560, 635], [405, 268], { extrapolateRight: 'clamp' })} y={226} frame={frame} goldCargo flip />}{frame >= 630 && <g transform="translate(215, 206)"><rect x="0" y="0" width="9" height="6" fill="#facc15" stroke="#0f172a" strokeWidth="1" /><rect x="6" y="-4" width="8" height="5" fill="#fde047" stroke="#0f172a" strokeWidth="1" /></g>}
           {SMART_CITIZENS.map((c) => { const p = walkP(SMART_PATHS[c.pathIdx], c.offset + frame * c.speed); return <SvgCitizen3 key={c.id} x={p.x + c.jx} y={p.y + c.jy} shirt="#2563eb" step={frame * 0.35 + c.id} flip={p.flip} carry={hasGoldCastle && c.id % 3 === 0 ? 'gold' : undefined} bubble={hasCannons && c.id === 2 ? 'cannon' : hasGoldCastle && c.id === 4 ? 'gold' : undefined} />; })}
           {frame >= 565 && (() => { const bp = walkP([[192, 113], [248, 113], [248, 152], [192, 152]], frame * 0.003); return <SvgCitizen3 x={bp.x} y={bp.y} shirt="#1e40af" step={frame * 0.3} flip={bp.flip} isLeader bubble={hasCannons ? 'cannon' : 'gold'} />; })()}
         </svg>
@@ -272,18 +272,18 @@ export const WorldBoxEp3: React.FC = () => {
           {/* Kapal Perang Pulau Pintar Merapat di Pantai Utara Pulau Bodoh */}
           {frame >= 58 && frame < 555 && (
             <SvgWarship3
-              x={frame < 125 ? interpolate(frame, [58, 125], [405, 232]) : frame > 495 ? interpolate(frame, [495, 555], [232, 415]) : 232}
-              y={frame < 125 ? interpolate(frame, [58, 125], [18, 44]) : 44}
+              x={frame < 125 ? interpolate(frame, [58, 125], [405, 310]) : frame > 495 ? interpolate(frame, [495, 555], [310, 415]) : 310}
+              y={frame < 125 ? interpolate(frame, [58, 125], [22, 56]) : 56}
               frame={frame} goldCargo={frame > 340} flip={frame < 490}
             />
           )}
           {/* Pasukan Biru & Leader Bima Mendarat (Frame 115 - 520) */}
           {frame >= 115 && frame <= 520 && (
             <g>
-              {[[212, 68], [238, 70], [258, 76]].map(([sx, sy], i) => (
+              {[[272, 74], [294, 78], [312, 86]].map(([sx, sy], i) => (
                 <SvgCitizen3 key={i} x={sx + Math.sin(frame * 0.08 + i) * 6} y={sy + Math.min(20, (frame - 115) * 0.4)} shirt="#2563eb" step={frame * 0.35 + i} carry={frame > 340 ? 'gold' : 'sword'} />
               ))}
-              <SvgCitizen3 x={224} y={Math.min(106, 68 + (frame - 115) * 0.5)} shirt="#1e40af" step={frame * 0.3} isLeader bubble={frame > 180 ? 'bulb' : 'ship'} />
+              <SvgCitizen3 x={282} y={Math.min(112, 74 + (frame - 115) * 0.5)} shirt="#1e40af" step={frame * 0.3} isLeader bubble={frame > 180 ? 'bulb' : 'ship'} />
             </g>
           )}
           {/* Warga Bodoh: Panik -> Makan Roti & Gali Gua -> Lari dari Naga */}
@@ -291,7 +291,7 @@ export const WorldBoxEp3: React.FC = () => {
             const t = (frame * (dragonOut ? 0.025 : c.speed) + c.offset) % 2;
             let px = t < 1 ? c.ax + (c.bx - c.ax) * t : c.bx + (c.ax - c.bx) * (t - 1);
             let py = t < 1 ? c.ay + (c.by - c.ay) * t : c.by + (c.ay - c.by) * (t - 1);
-            if (frame >= 565 && frame < 910 && c.id % 3 === 0) { const a = c.id * 1.3 + frame * 0.04; px = 106 + Math.cos(a) * 18; py = 92 + Math.sin(a) * 12; } else if (frame >= 565 && frame < 910 && c.id % 3 === 1) { const a = c.id * 0.9 + Math.sin(frame * 0.05 + c.id) * 0.5; px = 194 + Math.cos(a) * 32; py = 148 + Math.sin(a) * 18; }
+            if (frame >= 565 && frame < 910 && (c.id === 0 || c.id === 3 || c.id === 6)) { const sp = [[98, 108], [122, 98], [84, 104]][c.id / 3]; px = sp[0] + Math.sin(frame * 0.14 + c.id) * 4; py = sp[1] + Math.cos(frame * 0.14 + c.id) * 3; } else if (frame >= 565 && frame < 910 && c.id % 3 === 1) { const a = c.id * 0.9 + Math.sin(frame * 0.05 + c.id) * 0.5; px = 194 + Math.cos(a) * 32; py = 148 + Math.sin(a) * 18; }
             const bub = dragonOut ? (c.id % 5 === 0 ? 'panic' : undefined) : frame >= 565 && c.id % 4 === 0 ? 'bread' : frame >= 100 && frame < 340 && c.id % 3 === 0 ? 'panic' : undefined;
             return <SvgCitizen3 key={c.id} x={px} y={py} shirt="#dc2626" step={frame * (dragonOut ? 0.7 : 0.45) + c.id} flip={t >= 1} carry={frame >= 565 && !dragonOut && c.id % 3 === 0 ? 'bread' : undefined} bubble={bub} />;
           })}
