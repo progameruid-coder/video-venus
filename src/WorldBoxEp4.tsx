@@ -75,8 +75,9 @@ const SvgCastle4: React.FC<{ x: number; y: number; frame: number }> = ({ x, y, f
   </g>
 );
 
-const SvgCannon4: React.FC<{ x: number; y: number; frame: number; offset: number; fireUp: boolean }> = ({ x, y, frame, offset, fireUp }) => {
+const SvgCannon4: React.FC<{ x: number; y: number; frame: number; offset: number; fireUp: boolean; tx?: number; ty?: number }> = ({ x, y, frame, offset, fireUp, tx = x, ty = y - 90 }) => {
   const p = (frame + offset) % 24;
+  const dx = tx - x, dy = ty - y, t = Math.min(1, p / 16);
   return (
     <g transform={`translate(${x}, ${y})`}>
       <rect x="-10" y="-12" width="20" height="16" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
@@ -84,7 +85,8 @@ const SvgCannon4: React.FC<{ x: number; y: number; frame: number; offset: number
       {fireUp && (
         <g>
           {p < 6 && <rect x="-6" y="-26" width="12" height="8" fill="#fde047" opacity={1 - p / 6} />}
-          {p < 18 && <rect x="-3" y={-22 - p * 4.5} width="6" height="6" fill="#0f172a" stroke="#f97316" strokeWidth="1" />}
+          {p < 17 && <rect x={dx * t - 3} y={-18 + (dy + 18) * t - 3} width="6" height="6" fill="#0f172a" stroke="#f97316" strokeWidth="1.2" />}
+          {p >= 16 && p < 22 && <rect x={dx - 6} y={dy - 6} width="12" height="12" fill="#fde047" opacity={1 - (p - 16) / 6} />}
         </g>
       )}
     </g>
@@ -168,8 +170,8 @@ export const WorldBoxEp4: React.FC = () => {
   const { fps } = useVideoConfig();
   const sec = frame / fps;
 
-  const year = Math.min(50, Math.floor(interpolate(frame, [0, 265, 615, 785], [39, 42, 46, 50.9], { extrapolateRight: 'clamp' })));
-  const smartPop = frame < 270 ? 248 : frame < 410 ? Math.floor(interpolate(frame, [270, 405], [248, 215], { extrapolateRight: 'clamp' })) : Math.floor(interpolate(frame, [615, 790], [215, 310], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
+  const year = Math.min(50, Math.floor(interpolate(frame, [0, 265, 595, 655], [39, 42, 46, 50.9], { extrapolateRight: 'clamp' })));
+  const smartPop = frame < 270 ? 248 : frame < 410 ? Math.floor(interpolate(frame, [270, 405], [248, 215], { extrapolateRight: 'clamp' })) : Math.floor(interpolate(frame, [595, 690], [215, 310], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
   const dumbPop = frame < 235 ? Math.floor(interpolate(frame, [0, 230], [51, 18], { extrapolateRight: 'clamp' })) : Math.floor(interpolate(frame, [235, 750], [18, 12], { extrapolateRight: 'clamp' }));
 
   const dragonOnDumb = frame < 268;
@@ -216,7 +218,7 @@ export const WorldBoxEp4: React.FC = () => {
       <Sequence from={275} durationInFrames={130}><Audio src={staticFile('sfx_wb4_roar.wav')} volume={0.18} /></Sequence>
       {[300, 345, 435, 480, 520].map((fr) => <Sequence key={`cn-${fr}`} from={fr} durationInFrames={16}><Audio src={staticFile('sfx_wb4_cannon.wav')} volume={0.28} /></Sequence>)}
       <Sequence from={405} durationInFrames={35}><Audio src={whoosh} volume={0.4} /></Sequence>
-      <Sequence from={538} durationInFrames={36}><Audio src={staticFile('sfx_wb4_boom.wav')} volume={0.34} /></Sequence>
+      <Sequence from={562} durationInFrames={36}><Audio src={staticFile('sfx_wb4_boom.wav')} volume={0.34} /></Sequence>
       <Sequence from={610} durationInFrames={35}><Audio src={whoosh} volume={0.35} /></Sequence>
       {[650, 710, 820, 900, 1055].map((fr) => <Sequence key={`fw-${fr}`} from={fr} durationInFrames={18}><Audio src={staticFile('sfx_wb4_fw.wav')} volume={0.24} /></Sequence>)}
       <Sequence from={785} durationInFrames={35}><Audio src={whoosh} volume={0.4} /></Sequence>
@@ -238,8 +240,8 @@ export const WorldBoxEp4: React.FC = () => {
           <SvgHouse4 x={220} y={134} roof="#475569" />
           <SvgCastle4 x={176} y={136} frame={frame} />
           {celebration && <SvgLighthouse x={356} y={178} scale={spring({ frame: frame - 615, fps, config: { damping: 10 } })} frame={frame} />}
-          <SvgCannon4 x={152} y={208} frame={frame} offset={0} fireUp={dragonOnSmart} />
-          <SvgCannon4 x={302} y={208} frame={frame} offset={12} fireUp={dragonOnSmart} />
+          <SvgCannon4 x={152} y={208} frame={frame} offset={0} fireUp={dragonOnSmart} tx={interpolate(frame, [270, 340, 405], [220, 175, 215])} ty={interpolate(frame, [270, 320, 405], [220, 115, 102])} />
+          <SvgCannon4 x={302} y={208} frame={frame} offset={12} fireUp={dragonOnSmart} tx={interpolate(frame, [270, 340, 405], [220, 175, 215])} ty={interpolate(frame, [270, 320, 405], [220, 115, 102])} />
           <rect x="210" y="198" width="24" height="24" fill="#78350f" stroke="#0f172a" strokeWidth="1.5" />
           <SvgWarship4 x={268} y={226} frame={frame} flip />
           {celebration && <SvgWarship4 x={112} y={224} frame={frame + 14} />}
@@ -247,7 +249,7 @@ export const WorldBoxEp4: React.FC = () => {
           {SMART_CITIZENS.map((c) => { const p = walkP(SMART_PATHS[c.pathIdx], c.offset + frame * c.speed); return <SvgCitizen4 key={c.id} x={p.x + c.jx} y={p.y + c.jy} shirt="#2563eb" step={frame * 0.38 + c.id} flip={p.flip} bubble={dragonOnSmart && c.id % 6 === 0 ? 'cannon' : celebration && c.id % 7 === 0 ? 'trophy' : undefined} />; })}
           {(() => { const bp = walkP([[192, 113], [248, 113], [248, 152], [192, 152]], frame * 0.003); return <SvgCitizen4 x={bp.x} y={bp.y} shirt="#1e40af" step={frame * 0.3} flip={bp.flip} isLeader bubble={celebration ? 'trophy' : 'cannon'} />; })()}
           {dragonOnSmart && <SvgDragonMap4 x={interpolate(frame, [270, 340, 405], [220, 175, 215])} y={interpolate(frame, [270, 320, 405], [250, 115, 102])} frame={frame} flip={frame > 340} />}
-          {celebration && <><SvgFwBurst x={118} y={48} frame={frame} color="#fde047" /><SvgFwBurst x={312} y={42} frame={frame + 16} color="#38bdf8" /><SvgFwBurst x={215} y={36} frame={frame + 8} color="#f472b6" /></>}
+          {celebration && <><SvgFwBurst x={76} y={44} frame={frame} color="#fde047" /><SvgFwBurst x={364} y={42} frame={frame + 16} color="#38bdf8" /><SvgFwBurst x={386} y={118} frame={frame + 8} color="#f472b6" /></>}
         </svg>
       </div>
       {!cutActive && !showWinner && <div style={{ position: 'absolute', top: 726, left: '50%', transform: 'translateX(-50%)', backgroundColor: '#0f172a', border: '3px solid #38bdf8', borderRadius: 12, padding: '6px 18px', fontFamily, fontSize: 15, color: '#38bdf8', zIndex: 25 }}>PULAU PINTAR</div>}
@@ -270,7 +272,7 @@ export const WorldBoxEp4: React.FC = () => {
             <rect x="-10" y="-32" width="9" height="25" fill="#facc15" /><rect x="-10" y="-26" width="20" height="4" fill="#854d0e" />
             {Math.sin(frame * 0.4) > 0 && <rect x="6" y="-30" width="5" height="5" fill="#fef08a" />}
           </g>
-          {frame < 280 && [[296, 174], [156, 152], [262, 114]].map(([fx, fy], idx) => <g key={idx} transform={`translate(${fx}, ${fy})`}><rect x="-7" y="-9" width="14" height="10" fill="#ef4444" /><rect x="-5" y="-13" width="10" height="9" fill="#f97316" /><rect x="-2" y="-8" width="4" height="5" fill="#fde047" /></g>)}
+          {frame < 280 && [[296, 174], [156, 152], [262, 114]].map(([fx, fy], idx) => <g key={idx} transform={`translate(${fx}, ${fy})`}><rect x="-7" y="-9" width="14" height="10" fill="#ef4444" /><rect x="-5" y="-13" width="10" height="9" fill="#f97316" /><rect x="-2" y="-8" width="4" height="5" fill="#fde047" /></g>)}{[[35, 148, 138], [80, 268, 124], [125, 294, 168], [170, 174, 154], [210, 244, 118]].map(([st, sx, sy], idx) => { const a = frame - st; return a > 0 && a < 34 ? <g key={`sk-${idx}`} transform={`translate(${sx}, ${sy - a * 0.85})`} opacity={1 - a / 34}><rect x="-4" y="-4" width="8" height="6" fill="#f8fafc" /><rect x="-3" y="2" width="6" height="2" fill="#e2e8f0" /><rect x="-3" y="-2" width="2" height="2" fill="#0f172a" /><rect x="1" y="-2" width="2" height="2" fill="#0f172a" /></g> : null; })}
           {DUMB_CITIZENS.map((c) => {
             if (frame >= 260) {
               const ang = (c.id / 12) * Math.PI * 2 + Math.sin(frame * 0.04 + c.id) * 0.3;
@@ -302,7 +304,7 @@ export const WorldBoxEp4: React.FC = () => {
             return <div key={i} style={{ position: 'absolute', top: cy, left: cx, width: 16, height: 16, backgroundColor: ['#facc15', '#38bdf8', '#f87171', '#4ade80'][i % 4], transform: `rotate(${frame * 5 + i * 30}deg)` }} />;
           })}
           <div style={{ marginTop: -120, width: 880, backgroundColor: '#0f172a', border: '8px solid #facc15', borderRadius: 28, padding: '38px 34px', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,0.9)', transform: `scale(${winPop})` }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}><Ep4Icon type="trophy" size={68} /></div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 18 }}><svg width="84" height="84" viewBox="0 0 16 16" shapeRendering="crispEdges"><rect x="1" y="3" width="3" height="5" fill="#eab308" /><rect x="2" y="4" width="2" height="3" fill="#0f172a" /><rect x="12" y="3" width="3" height="5" fill="#eab308" /><rect x="12" y="4" width="2" height="3" fill="#0f172a" /><rect x="4" y="2" width="8" height="7" fill="#facc15" /><rect x="5" y="3" width="2" height="4" fill="#fef08a" /><rect x="5" y="9" width="6" height="2" fill="#eab308" /><rect x="7" y="11" width="2" height="2" fill="#ca8a04" /><rect x="4" y="13" width="8" height="2" fill="#ca8a04" /><rect x="13" y="1" width="2" height="2" fill="#ffffff" /></svg></div>
             <div style={{ fontFamily, fontSize: 20, color: '#fde047', letterSpacing: 1 }}>HASIL AKHIR TAHUN KE-50</div>
             <div style={{ fontFamily, fontSize: 34, color: '#38bdf8', marginTop: 22, lineHeight: 1.4, textShadow: '4px 4px 0 #1e3a8a' }}>PEMENANG:<br />PULAU PINTAR!</div>
             <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: 32, gap: 20 }}>
