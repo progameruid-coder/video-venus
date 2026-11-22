@@ -141,8 +141,8 @@ export const ZeroGravity5s: React.FC = () => {
   const car1X = -35 + (((149 - dCar * 0.72) % 340) + 340) % 340;
   const taxiX = -35 + (((233 + dCar * 0.78) % 340) + 340) % 340;
   // Jalur kucing bersih di kiri (bebas dari mobil biru & taksi) -> mendarat tepat di kepala Udin!
-  const catX = isZeroG ? interpolate(lift, [0, 1], [94, 68]) : isDropping ? 68 : isCrashed ? 68 : 94;
-  const catY = isZeroG ? interpolate(lift, [0, 1], [312, 134]) : isDropping ? interpolate(dropT, [0, 1], [134, 270]) : isCrashed ? 270 : 312;
+  const catX = isZeroG ? interpolate(lift, [0, 1], [98, 86]) : isDropping ? interpolate(dropT, [0, 1], [86, 72]) : isCrashed ? 72 : 98;
+  const catY = isZeroG ? interpolate(lift, [0, 1], [312, 188]) : isDropping ? interpolate(dropT, [0, 1], [188, 269]) : isCrashed ? 269 : 312;
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#0f172a', overflow: 'hidden', transform: `translate(${shake}px, ${-shake * 0.6}px)` }}>
@@ -159,7 +159,7 @@ export const ZeroGravity5s: React.FC = () => {
 
       <AbsoluteFill style={{ backgroundImage: 'radial-gradient(#38bdf8 3px, transparent 3px)', backgroundSize: '44px 44px', opacity: 0.22 }} />
 
-      <div style={{ position: 'absolute', top: 210, left: 60, right: 60, height: 1180, border: `8px solid ${isZeroG ? '#ef4444' : '#38bdf8'}`, borderRadius: 28, overflow: 'hidden', boxShadow: '0 22px 54px rgba(0,0,0,0.85)', zIndex: 15 }}>
+      <div style={{ position: 'absolute', top: 210, left: 60, right: 60, height: 1180, border: `8px solid ${isZeroG || isDropping ? '#ef4444' : '#38bdf8'}`, borderRadius: 28, overflow: 'hidden', boxShadow: '0 22px 54px rgba(0,0,0,0.85)', zIndex: 15 }}>
         <svg width="100%" height="100%" viewBox="0 0 270 330" preserveAspectRatio="xMidYMid slice" shapeRendering="crispEdges">
           <rect width="270" height="175" fill={isZeroG ? '#1d4ed8' : '#0284c7'} />
           <rect y="88" width="270" height="87" fill={isZeroG ? '#2563eb' : '#38bdf8'} />
@@ -224,7 +224,7 @@ export const ZeroGravity5s: React.FC = () => {
 
           {/* Gerobak Bakso di Trotoar Bawah (Jalur Bebas dari Taksi & Air Mancur!) */}
           {isCrashed && <rect x="122" y="314" width="38" height="7" fill="#fde047" opacity="0.65" />}
-          <PixelBakso x={154} y={307 - liftLate * 78} rot={isZeroG ? -20 * liftLate : isCrashed ? -94 : 0} floatT={liftLate} crashed={isCrashed} frame={frame} />
+          <PixelBakso x={154} y={isCrashed ? 301 : 307 - liftLate * 78} rot={isZeroG ? -20 * liftLate : isCrashed ? -94 : 0} floatT={liftLate} crashed={isCrashed} frame={frame} />
           {(liftLate > 0.05 || isCrashed) && [[-18, -28], [18, -32], [-6, -40], [24, -18]].map(([bx, by], i) => (
             <rect key={i} x={isCrashed ? 124 + i * 16 : 154 + bx} y={isCrashed ? 316 + (i % 2) * 3 : 292 + by - liftLate * (78 + i * 8)} width="6" height="6" rx="2" fill={i % 2 === 0 ? '#92400e' : '#f8fafc'} stroke="#0f172a" strokeWidth="1" />
           ))}
@@ -240,7 +240,7 @@ export const ZeroGravity5s: React.FC = () => {
 
           {/* SI UDIN: Santai (Normal) -> Mencengkeram Tiang Tanpa Menembus (0G) -> Duduk Lemas (Jatuh) */}
           {!isZeroG && !isDropping ? (
-            <g transform={`translate(68, ${(isCrashed ? 294 : 292) + (!isCrashed ? Math.sin(frame * 0.14) * 0.8 : 0)})`}>
+            <g transform={`translate(72, ${(isCrashed ? 294 : 292) + (!isCrashed ? Math.sin(frame * 0.14) * 0.8 : 0)})`}>
               {isCrashed ? (
                 <><rect x="-11" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /><rect x="2" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></>
               ) : (
@@ -299,7 +299,7 @@ export const ZeroGravity5s: React.FC = () => {
       <div style={{ position: 'absolute', top: 82, left: '50%', transform: 'translateX(-50%)', padding: '6px 18px', borderRadius: 20, backgroundColor: 'rgba(15, 23, 42, 0.85)', border: '2px solid rgba(250, 204, 21, 0.65)', fontFamily: 'sans-serif', fontSize: 22, fontWeight: 'bold', color: '#f8fafc', zIndex: 45 }}>@dysesat</div>
       <div style={{ position: 'absolute', top: 138, left: 65, right: 65, display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 45 }}>
         <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.94)', border: `3px solid ${isZeroG ? '#ef4444' : '#38bdf8'}`, borderRadius: 14, padding: '10px 16px', fontFamily, fontSize: 15, color: isZeroG ? '#f87171' : '#38bdf8' }}>GRAVITASI: {isZeroG ? '0G!' : '1G'}</div>
-        <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.94)', border: `3px solid ${isZeroG ? '#facc15' : isCrashed ? '#f87171' : '#4ade80'}`, borderRadius: 14, padding: '10px 16px', fontFamily, fontSize: 14, color: isZeroG ? '#fde047' : isCrashed ? '#f87171' : '#4ade80' }}>{isZeroG ? 'MELAYANG!' : isCrashed ? 'KACAU!' : 'NORMAL'}</div>
+        <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.94)', border: `3px solid ${isZeroG ? '#facc15' : (isDropping || isCrashed) ? '#f87171' : '#4ade80'}`, borderRadius: 14, padding: '10px 16px', fontFamily, fontSize: 14, color: isZeroG ? '#fde047' : (isDropping || isCrashed) ? '#f87171' : '#4ade80' }}>{isZeroG ? 'MELAYANG!' : isDropping ? 'JATUH!' : isCrashed ? 'KACAU!' : 'NORMAL'}</div>
       </div>
 
       {activeWord && !showCliff && (

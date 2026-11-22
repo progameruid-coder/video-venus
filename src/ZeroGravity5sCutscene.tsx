@@ -35,8 +35,8 @@ export const CloseUpUdinCrash: React.FC<{ frame: number; localFrame: number }> =
           <rect x="-16" y="-20" width="14" height="8" fill="#bae6fd" /><rect x="2" y="-20" width="13" height="8" fill="#bae6fd" />
           <rect x="-26" y="4" width="13" height="11" fill="#0f172a" /><rect x="14" y="5" width="13" height="11" fill="#0f172a" />
           {/* Asap Mesin Keluar dari Kap Depan Kanan */}
-          <rect x="16" y={-24 - (frame % 20)} width="12" height="9" fill="#e2e8f0" opacity={0.8 - (frame % 20) / 25} />
-          <rect x="24" y={-36 - ((frame + 10) % 20)} width="10" height="8" fill="#cbd5e1" opacity={0.65 - ((frame + 10) % 20) / 26} />
+          <rect x="16" y={-24 - (frame % 20)} width="12" height="9" fill="#e2e8f0" stroke="#475569" strokeWidth="1.2" opacity={0.88 - (frame % 20) / 25} />
+          <rect x="24" y={-36 - ((frame + 10) % 20)} width="10" height="8" fill="#cbd5e1" stroke="#475569" strokeWidth="1.2" opacity={0.78 - ((frame + 10) % 20) / 26} />
         </g>
         {/* Mangkok Bakso Tumpah + Kuah + Mi + Pentol */}
         <g transform="translate(184, 248)">
@@ -71,7 +71,7 @@ export const CloseUpUdinCrash: React.FC<{ frame: number; localFrame: number }> =
             <rect x="2" y="-44" width="10" height="10" fill="#fff" stroke="#0f172a" strokeWidth="1.5" />
             <rect x="-10" y="-42" width="4" height="4" fill="#0f172a" /><rect x="6" y="-39" width="4" height="4" fill="#0f172a" />
             <rect x="-6" y="-29" width="12" height="5" fill="#7f1d1d" stroke="#0f172a" strokeWidth="1.2" />
-            <rect x="14" y={-50 + (frame % 12)} width="3.5" height="6" fill="#7dd3fc" />
+            <rect x="11" y={-49 + (frame % 10)} width="3.5" height="5.5" fill="#7dd3fc" />
             {/* KUCING ORANYE DUDUK SANTAI DI KEPALA UDIN */}
             <g transform="translate(0, -68)">
               <rect x="-16" y="-10" width="30" height="16" fill="#f97316" stroke="#0f172a" strokeWidth="2" />
@@ -86,7 +86,7 @@ export const CloseUpUdinCrash: React.FC<{ frame: number; localFrame: number }> =
             {/* 3 Bintang Pusing Mengorbit Bersih di Atas Telinga Kucing! */}
             {[0, 1, 2].map((i) => {
               const a = starA + (i * Math.PI * 2) / 3;
-              return <rect key={i} x={Math.cos(a) * 34 - 4} y={-105 + Math.sin(a) * 7} width="8" height="8" fill={i % 2 === 0 ? '#fde047' : '#ffffff'} stroke="#0f172a" strokeWidth="1.2" />;
+              return <rect key={i} x={Math.cos(a) * 34 - 4} y={-112 + Math.sin(a) * 6} width="8" height="8" fill={i % 2 === 0 ? '#fde047' : '#ffffff'} stroke="#0f172a" strokeWidth="1.2" />;
             })}
           </g>
         </g>
