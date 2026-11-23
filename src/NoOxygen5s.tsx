@@ -25,8 +25,12 @@ const OxyCar: React.FC<{ x: number; y: number; color: string; roof: string; taxi
     <rect x="-18" y="6" width="5" height="5" fill="#94a3b8" /><rect x="12" y="6" width="5" height="5" fill="#94a3b8" />
     {stalled && (
       <g>
-        <rect x={taxi ? -26 : 16} y={-18 - (frame % 18)} width="9" height="7" fill="#e2e8f0" stroke="#475569" strokeWidth="1" opacity={0.85 - (frame % 18) / 22} />
-        <text x="-4" y="-24" fill="#f87171" fontSize="9" fontFamily="monospace" fontWeight="bold" opacity={frame % 16 < 8 ? 1 : 0.3}>X</text>
+        <rect x={taxi ? -25 : 15} y={-18 - (frame % 18)} width="10" height="7" fill="#e2e8f0" stroke="#334155" strokeWidth="1.2" opacity={0.9 - (frame % 18) / 22} />
+        <rect x={taxi ? -21 : 19} y={-27 - ((frame + 9) % 18)} width="7" height="6" fill="#cbd5e1" stroke="#334155" strokeWidth="1" opacity={0.75 - ((frame + 9) % 18) / 24} />
+        <g transform="translate(0, -28)" opacity={frame % 16 < 10 ? 1 : 0.35}>
+          <rect x="-6" y="-6" width="12" height="11" rx="2" fill="#0f172a" />
+          <text x="-3.5" y="2.5" fill="#f87171" fontSize="9" fontFamily="monospace" fontWeight="bold">X</text>
+        </g>
       </g>
     )}
   </g>
@@ -37,14 +41,15 @@ const OxyPerson: React.FC<{ x: number; y: number; shirt: string; sunburn: boolea
   const isWave = panic && !holdEar && !after;
   const isEar = holdEar && !after;
   const fl = isWave ? Math.sin(frame * 0.7) * 16 : 0;
-  const bob = isWave ? Math.abs(Math.sin(frame * 0.45)) * -2.5 : !after ? Math.sin(frame * 0.14) * 0.7 : 0;
+  const bob = isWave ? Math.abs(Math.sin(frame * 0.45)) * -2.5 : Math.sin(frame * 0.14) * 0.6;
   const blink = !panic && !after && (frame % 95) > 90;
   return (
-    <g transform={`translate(${x + (isEar ? Math.sin(frame * 1.1) * 1 : 0)}, ${y + (after ? 5 : bob)})`}>
+    <g transform={`translate(${x + (isEar ? Math.sin(frame * 1.1) * 1 : 0)}, ${y + (after ? 5 : 0) + bob})`}>
       {after ? (
         <>
-          <rect x="-11" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
-          <rect x="2" y="4" width="9" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="-9" y="3" width="7" height="6" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="2" y="3" width="7" height="6" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="-11" y="5" width="3" height="4" fill="#0f172a" /><rect x="8" y="5" width="3" height="4" fill="#0f172a" />
         </>
       ) : (
         <>
@@ -53,14 +58,15 @@ const OxyPerson: React.FC<{ x: number; y: number; shirt: string; sunburn: boolea
         </>
       )}
       <rect x="-7" y="-8" width="14" height="13" fill={shirt} stroke="#0f172a" strokeWidth="1.4" />
-      {/* Lengan Kiri: Menekuk Rapat ke Telinga (Detik 4-5) | Melambai (1-3) | Menopang Duduk (Selesai) */}
+      {/* Lengan Kiri: Siku Menekuk Tutup Telinga | Melambai | Bertopang Duduk */}
       {isEar ? (
         <>
-          <rect x="-11" y="-14" width="4.5" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
-          <rect x="-9" y="-16" width="4" height="4" fill={skin} stroke="#0f172a" strokeWidth="1" />
+          <rect x="-12" y="-8" width="6" height="4" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="-12" y="-16" width="4.5" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="-10" y="-17" width="4.5" height="4" fill={skin} stroke="#0f172a" strokeWidth="1" />
         </>
       ) : (
-        <g transform={`translate(-7, -6) rotate(${isWave ? 128 + fl : after ? 30 : 0})`}>
+        <g transform={`translate(-7, -6) rotate(${isWave ? 128 + fl : after ? 16 : 0})`}>
           <rect x="-2.5" y="0" width="4.5" height="8.5" fill={shirt} stroke="#0f172a" strokeWidth="1.2" />
           <rect x="-2.5" y="7.5" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" />
         </g>
@@ -68,17 +74,18 @@ const OxyPerson: React.FC<{ x: number; y: number; shirt: string; sunburn: boolea
       {/* Lengan Kanan */}
       {isEar && !drink ? (
         <>
-          <rect x="6.5" y="-14" width="4.5" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
-          <rect x="5" y="-16" width="4" height="4" fill={skin} stroke="#0f172a" strokeWidth="1" />
+          <rect x="6" y="-8" width="6" height="4" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="7.5" y="-16" width="4.5" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="5.5" y="-17" width="4.5" height="4" fill={skin} stroke="#0f172a" strokeWidth="1" />
         </>
       ) : (
-        <g transform={`translate(7, -6) rotate(${isWave && !drink ? -128 - fl : after && !drink ? -30 : 0})`}>
+        <g transform={`translate(7, -6) rotate(${isWave && !drink ? -128 - fl : after && !drink ? -16 : 0})`}>
           <rect x="-2" y="0" width="4.5" height="8.5" fill={shirt} stroke="#0f172a" strokeWidth="1.2" />
           <rect x="-2" y="7.5" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" />
         </g>
       )}
       {drink && (
-        <g transform="translate(11, 0)">
+        <g transform="translate(10.5, 1)">
           <rect x="-2" y="-3" width="6" height="8" fill="#38bdf8" stroke="#0f172a" strokeWidth="1" />
           <g transform="translate(2, -3) rotate(24)"><rect x="-0.8" y="-5" width="1.6" height="5" fill="#ef4444" /></g>
         </g>
@@ -92,7 +99,7 @@ const OxyPerson: React.FC<{ x: number; y: number; shirt: string; sunburn: boolea
       )}
       {(panic || after) && <rect x="-2" y="-11" width="4" height="2.2" fill="#7f1d1d" />}
       {sunburn && <rect x={-2 + (frame % 3)} y={-26 - (frame % 12)} width="3" height="4" fill="#ffffff" opacity={0.8 - (frame % 12) / 15} />}
-      {isEar && <text x="-18" y="-14" fill="#fde047" fontSize="9" fontFamily="monospace" fontWeight="bold" opacity={frame % 8 < 4 ? 1 : 0.3}>~</text>}
+      {isEar && <text x="-20" y="-14" fill="#fde047" fontSize="9" fontFamily="monospace" fontWeight="bold" opacity={frame % 8 < 4 ? 1 : 0.3}>~</text>}
     </g>
   );
 };
@@ -109,41 +116,29 @@ const ConcreteBuilding: React.FC<{ x: number; y: number; w: number; h: number; c
           <rect x="-2" y={curY - 4} width={w + 4} height="6" fill="#334155" stroke="#0f172a" strokeWidth="1.5" />
           {curH > 44 && [0, 1, 2].map((row) => curY + 12 + row * 26 < base - 16 && (
             <g key={row}>
-              <rect x={8} y={curY + 12 + row * 26} width={14} height={14} fill="#bae6fd" stroke="#0f172a" strokeWidth="1.4" />
-              <rect x={w - 22} y={curY + 12 + row * 26} width={14} height={14} fill="#bae6fd" stroke="#0f172a" strokeWidth="1.4" />
+              <rect x={8} y={curY + 12 + row * 26} width={13} height={14} fill="#bae6fd" stroke="#0f172a" strokeWidth="1.4" />
+              <rect x={w - 21} y={curY + 12 + row * 26} width={13} height={14} fill="#bae6fd" stroke="#0f172a" strokeWidth="1.4" />
             </g>
           ))}
           {collapseT > 0.05 && (
             <>
               <rect x={w * 0.32} y={curY + 8} width="3" height={curH * 0.48} fill="#0f172a" />
-              <rect x={w * 0.32 + 3} y={curY + 24} width="13" height="3" fill="#0f172a" />
+              <rect x={w * 0.32 + 3} y={curY + 24} width="12" height="3" fill="#0f172a" />
               <rect x={w * 0.64} y={curY + 16} width="3" height={curH * 0.38} fill="#0f172a" />
             </>
           )}
         </>
       ) : (
         <g>
-          {variant === 0 && (
-            <>
-              <polygon points={`-4,${base} 10,${base - 28} 26,${base - 18} 44,${base - 24} ${w + 4},${base}`} fill="#64748b" stroke="#0f172a" strokeWidth="2" />
-              <rect x="14" y={base - 38} width="2.5" height="14" fill="#1e293b" />
-              <rect x="38" y={base - 10} width="14" height="8" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.4" />
-            </>
-          )}
-          {variant === 1 && (
-            <>
-              <polygon points={`-2,${base} 18,${base - 14} 38,${base - 26} 56,${base - 12} ${w + 4},${base}`} fill="#475569" stroke="#0f172a" strokeWidth="2" />
-              <rect x="36" y={base - 36} width="2.5" height="12" fill="#0f172a" />
-              <rect x="6" y={base - 9} width="16" height="8" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.4" />
-            </>
-          )}
-          {variant === 2 && (
-            <>
-              <polygon points={`-4,${base} 14,${base - 20} 28,${base - 11} 50,${base - 29} ${w + 4},${base}`} fill="#64748b" stroke="#0f172a" strokeWidth="2" />
-              <rect x="48" y={base - 40} width="2.5" height="14" fill="#1e293b" />
-              <rect x="20" y={base - 12} width="18" height="9" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.4" />
-            </>
-          )}
+          {/* Puing Beton Berundak + Pecahan Kaca & Besi Beton */}
+          <rect x="-3" y={base - 11} width={w + 6} height="11" fill="#475569" stroke="#0f172a" strokeWidth="1.6" />
+          <rect x={variant === 1 ? 6 : 2} y={base - 21} width={w * 0.56} height="11" fill="#64748b" stroke="#0f172a" strokeWidth="1.6" />
+          <rect x={variant === 0 ? 24 : variant === 1 ? 26 : 18} y={base - 17} width={w * 0.48} height="9" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x={variant === 2 ? 28 : 12} y={base - 27} width={18} height="8" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x={variant === 1 ? 14 : 34} y={base - 14} width="8" height="6" fill="#bae6fd" stroke="#0f172a" strokeWidth="1.2" />
+          <line x1={variant === 2 ? 36 : 18} y1={base - 27} x2={variant === 2 ? 42 : 14} y2={base - 36} stroke="#1e293b" strokeWidth="2" />
+          <rect x="-6" y={base - 5} width="7" height="5" fill="#94a3b8" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x={w + 1} y={base - 4} width="6" height="4" fill="#64748b" stroke="#0f172a" strokeWidth="1.2" />
         </g>
       )}
       {collapseT > 0.05 && collapseT < 0.98 && (
@@ -221,49 +216,56 @@ export const NoOxygen5s: React.FC = () => {
           <rect y="175" width="270" height="34" fill="#cbd5e1" /><rect y="209" width="270" height="78" fill="#334155" />
           <rect y="207" width="270" height="4" fill="#94a3b8" /><rect y="287" width="270" height="43" fill="#cbd5e1" /><rect y="285" width="270" height="4" fill="#94a3b8" />
           {[14, 58, 102, 146, 190, 234].map((mx) => <rect key={mx} x={mx} y="246" width="24" height="5" fill="#fde047" />)}
+          {/* Retakan Aspal di Area Kosong (Jauh dari Mobil Biru & Taksi!) */}
           {collapseT > 0.6 && (
             <>
-              <rect x="46" y="218" width="22" height="3" fill="#0f172a" /><rect x="64" y="221" width="14" height="3" fill="#0f172a" />
-              <rect x="192" y="274" width="26" height="3" fill="#0f172a" /><rect x="206" y="294" width="18" height="3" fill="#64748b" />
+              <rect x="20" y="224" width="16" height="3" fill="#0f172a" /><rect x="32" y="227" width="10" height="3" fill="#0f172a" />
+              <rect x="44" y="268" width="20" height="3" fill="#0f172a" /><rect x="58" y="271" width="12" height="3" fill="#0f172a" />
+              <rect x="228" y="228" width="18" height="3" fill="#0f172a" /><rect x="238" y="231" width="12" height="3" fill="#0f172a" />
             </>
           )}
 
-          {/* 3 Gedung Beton Kota dengan Bentuk & Puing Berbeda */}
-          <ConcreteBuilding x={8} y={62} w={60} h={128} color="#64748b" variant={0} collapseT={collapseT} frame={frame} />
-          <ConcreteBuilding x={104} y={78} w={62} h={112} color="#475569" variant={1} collapseT={collapseT} frame={frame + 4} />
-          <ConcreteBuilding x={198} y={66} w={64} h={124} color="#64748b" variant={2} collapseT={collapseT} frame={frame + 8} />
+          {/* 3 Gedung Beton (Sisi Kanan Kosong untuk Pohon Berbak Tanah!) */}
+          <ConcreteBuilding x={6} y={62} w={56} h={126} color="#64748b" variant={0} collapseT={collapseT} frame={frame} />
+          <ConcreteBuilding x={96} y={76} w={58} h={112} color="#475569" variant={1} collapseT={collapseT} frame={frame + 4} />
+          <ConcreteBuilding x={174} y={66} w={54} h={122} color="#64748b" variant={2} collapseT={collapseT} frame={frame + 8} />
 
-          {/* Pohon Taman & Lampu Jalan (Menyala Saat Langit Gelap 0% O2!) */}
-          <rect x="234" y="160" width="7" height="24" fill="#78350f" />
-          <rect x="223" y="140" width="28" height="22" fill={isSunburned ? '#65a30d' : '#15803d'} stroke="#0f172a" strokeWidth="1.5" />
-          <rect x="228" y="132" width="18" height="10" fill={isSunburned ? '#84cc16' : '#22c55e'} />
-          <rect x="34" y="146" width="5" height="154" fill="#334155" stroke="#0f172a" strokeWidth="1.5" />
-          <rect x="29" y="296" width="15" height="7" fill="#1e293b" stroke="#0f172a" strokeWidth="1.4" />
-          <rect x="30" y="134" width="13" height="14" fill={isNoOxy ? '#fef08a' : '#cbd5e1'} stroke="#0f172a" strokeWidth="1.5" />
-          {isNoOxy && <polygon points="24,148 49,148 64,296 8,296" fill="#fef08a" opacity="0.14" />}
-          <OxyCar x={car1X} y={230} color="#2563eb" roof="#3b82f6" stalled={isStalled} frame={frame} />
+          {/* Tiang Lampu Kokoh di Trotoar Atas (Di Celah Gedung, Tidak Tertabrak Mobil!) */}
+          <rect x="68" y="130" width="5" height="68" fill="#334155" stroke="#0f172a" strokeWidth="1.5" />
+          <rect x="63" y="195" width="15" height="6" fill="#1e293b" stroke="#0f172a" strokeWidth="1.4" />
+          <rect x="64" y="118" width="13" height="13" fill={isNoOxy ? '#fef08a' : '#cbd5e1'} stroke="#0f172a" strokeWidth="1.5" />
+          {isNoOxy && <polygon points="60,131 81,131 94,204 46,204" fill="#fef08a" opacity="0.16" />}
+
+          {/* Pohon Kanan Tertanam Kokoh di Dalam Bak Tanah Trotoar (100% TIDAK MELAYANG!) */}
+          <g>
+            <rect x="236" y="201" width="26" height="3" fill="rgba(15,23,42,0.28)" />
+            <rect x="237" y="194" width="24" height="8" fill="#64748b" stroke="#0f172a" strokeWidth="1.4" />
+            <rect x="239" y="192" width="20" height="4" fill="#78350f" stroke="#0f172a" strokeWidth="1" />
+            <rect x="246" y="168" width="6" height="26" fill="#78350f" stroke="#0f172a" strokeWidth="1.3" />
+            <rect x="235" y="148" width="28" height="22" fill={isSunburned ? '#65a30d' : '#15803d'} stroke="#0f172a" strokeWidth="1.5" />
+            <rect x="240" y="140" width="18" height="10" fill={isSunburned ? '#84cc16' : '#22c55e'} stroke="#0f172a" strokeWidth="1.3" />
+          </g>
+          <OxyCar x={car1X} y={232} color="#2563eb" roof="#3b82f6" stalled={isStalled} frame={frame} />
           <OxyCar x={taxiX} y={264} color="#eab308" roof="#facc15" taxi stalled={isStalled} frame={frame} />
 
-          <OxyPerson x={86} y={196} shirt="#16a34a" sunburn={isSunburned} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame} />
+          <OxyPerson x={92} y={196} shirt="#16a34a" sunburn={isSunburned} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame} />
           <OxyPerson x={184} y={196} shirt="#9333ea" sunburn={isSunburned} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame + 6} />
           <OxyPerson x={128} y={296} shirt="#dc2626" sunburn={isSunburned} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame + 3} drink />
 
-          {/* Radiasi Panas Sinar UV Tajam (Kilau Atas + Garis Panas Diagonal, Bukan Lampu Disko!) */}
+          {/* Radiasi Sinar UV Lembut Bertahap + Riak Panas (Tanpa Garis Tajam & Strip Ungu!) */}
           {isUV && (
             <g>
-              <rect width="270" height="330" fill="#f97316" opacity={0.14 + Math.sin(frame * 0.4) * 0.05} />
-              <rect width="270" height="58" fill="#fde047" opacity={0.28 + Math.sin(frame * 0.5) * 0.08} />
-              {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-                const offset = ((frame * 12 + i * 52) % 340) - 40;
-                return (
-                  <polygon
-                    key={i}
-                    points={`${i * 44 - 20},${offset} ${i * 44 - 14},${offset} ${i * 44 + 8},${offset + 52} ${i * 44 + 2},${offset + 52}`}
-                    fill={i % 2 === 0 ? '#fef08a' : '#e879f9'}
-                    opacity="0.58"
-                  />
-                );
-              })}
+              <rect width="270" height="330" fill="#f97316" opacity={0.11 + Math.sin(frame * 0.35) * 0.04} />
+              <rect y="0" width="270" height="22" fill="#fde047" opacity={0.34 + Math.sin(frame * 0.45) * 0.06} />
+              <rect y="22" width="270" height="24" fill="#fb923c" opacity={0.22 + Math.sin(frame * 0.45) * 0.05} />
+              <rect y="46" width="270" height="28" fill="#c084fc" opacity={0.13 + Math.sin(frame * 0.45) * 0.04} />
+              <rect y="74" width="270" height="32" fill="#c084fc" opacity="0.06" />
+              {[42, 134, 218].map((rx, i) => (
+                <polygon key={i} points={`${rx - 22},0 ${rx + 18},0 ${rx + 66},330 ${rx + 18},330`} fill={i === 1 ? '#fde047' : '#e879f9'} opacity={0.12 + Math.sin(frame * 0.35 + i * 2) * 0.05} />
+              ))}
+              {[0, 1, 2, 3, 4].map((i) => (
+                <rect key={i} x={30 + i * 54 + Math.sin(frame * 0.4 + i) * 4} y={280 - ((frame * 3 + i * 38) % 120)} width="12" height="2.5" fill="#fef08a" opacity="0.45" />
+              ))}
             </g>
           )}
         </svg>
