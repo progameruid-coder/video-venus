@@ -1,5 +1,6 @@
 import React from 'react';
 import { Composition } from 'remotion';
+import { MarianaDive } from './MarianaDive';
 import { PlanetSurvival } from './PlanetSurvival';
 import { NoOxygen5s } from './NoOxygen5s';
 import { ZeroGravity5s } from './ZeroGravity5s';
@@ -14,6 +15,7 @@ import { VenusFactVideo } from './VenusFactVideo';
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition id="MarianaDive" component={MarianaDive} durationInFrames={1387} fps={30} width={1080} height={1920} />
       <Composition id="PlanetSurvival" component={PlanetSurvival} durationInFrames={1346} fps={30} width={1080} height={1920} />
       <Composition id="NoOxygen5s" component={NoOxygen5s} durationInFrames={1388} fps={30} width={1080} height={1920} />
       <Composition id="ZeroGravity5s" component={ZeroGravity5s} durationInFrames={1358} fps={30} width={1080} height={1920} />
