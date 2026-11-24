@@ -14,7 +14,7 @@ import { VenusFactVideo } from './VenusFactVideo';
 export const RemotionRoot: React.FC = () => {
   return (
     <>
-      <Composition id="PlanetSurvival" component={PlanetSurvival} durationInFrames={1366} fps={30} width={1080} height={1920} />
+      <Composition id="PlanetSurvival" component={PlanetSurvival} durationInFrames={1346} fps={30} width={1080} height={1920} />
       <Composition id="NoOxygen5s" component={NoOxygen5s} durationInFrames={1388} fps={30} width={1080} height={1920} />
       <Composition id="ZeroGravity5s" component={ZeroGravity5s} durationInFrames={1358} fps={30} width={1080} height={1920} />
       <Composition id="WorldBoxEp4" component={WorldBoxEp4} durationInFrames={1200} fps={30} width={1080} height={1920} />
