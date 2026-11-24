@@ -4,7 +4,6 @@ import { loadFont } from '@remotion/google-fonts/PressStart2P';
 import { whoosh, ding } from '@remotion/sfx';
 import { WORD_SUBS_OXY5S, OXY_TIMING } from './oxy5sWords';
 import { CloseUpUdinSunburn } from './NoOxygen5sCutscene';
-import { OxyPerson } from './OxyVoxelPerson';
 
 const { fontFamily } = loadFont();
 
@@ -37,6 +36,84 @@ const OxyCar: React.FC<{ x: number; y: number; color: string; roof: string; taxi
   </g>
 );
 
+const OxyPerson: React.FC<{ x: number; y: number; shirt: string; sunburn: boolean; showHeat: boolean; holdEar: boolean; panic: boolean; after: boolean; walk?: boolean; frame: number; drink?: boolean }> = ({ x, y, shirt, sunburn, showHeat, holdEar, panic, after, walk = false, frame, drink = false }) => {
+  const skin = sunburn ? '#fb7185' : '#fed7aa';
+  const isWave = panic && !holdEar && !after;
+  const isEar = holdEar && !after;
+  const fl = isWave ? Math.sin(frame * 0.7) * 16 : 0;
+  const walkStep = walk ? Math.sin(frame * 0.28) * 14 : 0;
+  const bob = isWave ? Math.abs(Math.sin(frame * 0.45)) * -2.5 : walk ? Math.abs(Math.sin(frame * 0.28)) * -1.4 : Math.sin(frame * 0.14) * 0.6;
+  const blink = !panic && !after && (frame % 95) > 90;
+  return (
+    <g transform={`translate(${x + (isEar ? Math.sin(frame * 1.1) * 1 : 0)}, ${y + (after ? 8 : 0) + bob})`}>
+      {after ? (
+        <>
+          <ellipse cx="0" cy="7" rx="13" ry="3.5" fill="rgba(15,23,42,0.28)" />
+          <rect x="-12" y="2" width="10" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="2" y="2" width="10" height="5" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="-13" y="2" width="3" height="5" fill="#f8fafc" stroke="#0f172a" strokeWidth="1" />
+          <rect x="10" y="2" width="3" height="5" fill="#f8fafc" stroke="#0f172a" strokeWidth="1" />
+        </>
+      ) : (
+        <>
+          <g transform={`translate(-3, 4) rotate(${walkStep})`}><rect x="-2" y="0" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></g>
+          <g transform={`translate(3, 4) rotate(${-walkStep})`}><rect x="-2" y="0" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" /></g>
+        </>
+      )}
+      <rect x="-7" y={after ? -6 : -8} width="14" height={after ? 11 : 13} fill={shirt} stroke="#0f172a" strokeWidth="1.4" />
+      {isEar ? (
+        <>
+          <rect x="-12" y="-8" width="6" height="4" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="-12" y="-16" width="4.5" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="-10" y="-17" width="4.5" height="4" fill={skin} stroke="#0f172a" strokeWidth="1" />
+        </>
+      ) : (
+        <g transform={`translate(-7, ${after ? -4 : -6}) rotate(${isWave ? 128 + fl : after ? 34 : -walkStep * 0.5})`}>
+          <rect x="-2.5" y="0" width="4.5" height="8" fill={shirt} stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="-2.5" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" />
+        </g>
+      )}
+      {isEar && !drink ? (
+        <>
+          <rect x="6" y="-8" width="6" height="4" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="7.5" y="-16" width="4.5" height="9" fill={shirt} stroke="#0f172a" strokeWidth="1.1" />
+          <rect x="5.5" y="-17" width="4.5" height="4" fill={skin} stroke="#0f172a" strokeWidth="1" />
+        </>
+      ) : (
+        <g transform={`translate(7, ${after ? -4 : -6}) rotate(${isWave && !drink ? -128 - fl : after && !drink ? -34 : walkStep * 0.5})`}>
+          <rect x="-2" y="0" width="4.5" height="8" fill={shirt} stroke="#0f172a" strokeWidth="1.2" />
+          <rect x="-2" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" />
+        </g>
+      )}
+      {drink && (
+        <g transform={`translate(10.5, ${after ? 1.5 : 1})`}>
+          <rect x="-2" y="-3" width="6" height="8" fill="#38bdf8" stroke="#0f172a" strokeWidth="1" />
+          <g transform="translate(2, -3) rotate(24)"><rect x="-0.8" y="-5" width="1.6" height="5" fill="#ef4444" /></g>
+        </g>
+      )}
+      <g transform={`translate(0, ${after ? 3 : 0})`}>
+        <rect x="-6" y="-19" width="12" height="11" fill={skin} stroke="#0f172a" strokeWidth="1.4" />
+        <rect x="-6" y="-21" width="12" height="4" fill="#29150b" />
+        {blink ? (
+          <><rect x="-3.5" y="-14" width="3" height="1.2" fill="#0f172a" /><rect x="1.5" y="-14" width="3" height="1.2" fill="#0f172a" /></>
+        ) : (
+          <><rect x="-3" y="-15" width="2" height="2" fill="#0f172a" /><rect x="2" y="-15" width="2" height="2" fill="#0f172a" /></>
+        )}
+        {(panic || after) && <rect x="-2" y="-11" width="4" height="2.2" fill="#7f1d1d" />}
+        {/* Gelombang Panas Halus di Samping Atas Saat UV (Bukan Sumbu Lilin!) */}
+        {showHeat && [-5, 4].map((hx, i) => {
+          const hp = ((frame + i * 10) % 20) / 20;
+          return <rect key={i} x={hx} y={-27 - hp * 10} width="2.5" height="4" fill="#fef08a" opacity={Math.sin(hp * Math.PI) * 0.75} />;
+        })}
+        {isEar && (
+          <g opacity={frame % 8 < 4 ? 1 : 0.3} fill="#fde047">
+            <rect x="-16" y="-18" width="2" height="2" /><rect x="-18" y="-16" width="2" height="5" /><rect x="-16" y="-11" width="2" height="2" />
+          </g>
+        )}
+      </g>
+    </g>
+  );
+};
 const ConcreteBuilding: React.FC<{ x: number; y: number; w: number; h: number; color: string; variant: 0 | 1 | 2; collapseT: number; frame: number }> = ({ x, y, w, h, color, variant, collapseT, frame }) => {
   const curH = Math.max(12, h * (1 - collapseT * 0.9));
   const curY = y + (h - curH);
@@ -228,7 +305,7 @@ export const NoOxygen5s: React.FC = () => {
           <OxyCar x={car1X} y={232} color="#2563eb" roof="#3b82f6" stalled={isStalled} frame={frame} />
           <OxyCar x={taxiX} y={264} color="#eab308" roof="#facc15" taxi stalled={isStalled} frame={frame} />
 
-          <OxyPerson x={87} y={196} shirt="#16a34a" sunburn={isSunburned} showHeat={showHeat} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame} />
+          <OxyPerson x={82} y={196} shirt="#16a34a" sunburn={isSunburned} showHeat={showHeat} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame} />
           <OxyPerson x={192} y={196} shirt="#9333ea" sunburn={isSunburned} showHeat={showHeat} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} frame={frame + 6} />
           <OxyPerson x={udinX} y={296} shirt="#dc2626" sunburn={isSunburned} showHeat={showHeat} holdEar={isHoldEar} panic={isNoOxy} after={isAfter} walk={isWalking} frame={frame + 3} drink />
 
