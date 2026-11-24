@@ -70,8 +70,8 @@ async def main():
     t_back  = max(t_jup + 60, int(s_back * f))
     cliff   = max(t_back + 80, math.ceil((le + 0.15) * f))
     t_choic = min(cliff - 18, max(t_back + 90, int(s_choic * f)))
-    t_c1    = t_back + 8
-    t_c2    = min(t_choic - 8, max(t_c1 + 88, int(s_cta * f) + 6))
+    t_c1    = t_back
+    t_c2    = max(t_c1 + 100, t_choic - 6)
 
     tm = {
         "tEarthStat": t_estat, "tPortal": t_port, "tMerc": t_merc, "tMercNight": t_mnigh,

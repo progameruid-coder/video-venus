@@ -15,14 +15,14 @@ const getWordColor = (word: string) => {
   return '#ffffff';
 };
 
-type UdinMode = 'normal' | 'mercHot' | 'mercCold' | 'crush' | 'mars' | 'fall' | 'relief';
+type UdinMode = 'normal' | 'shock' | 'mercHot' | 'mercCold' | 'crush' | 'mars' | 'fall' | 'relief';
 
 const Udin2D: React.FC<{
   x: number; y: number; mode: UdinMode; frame: number;
   crushT?: number; blueT?: number; warpScale?: number; fallShrink?: number;
 }> = ({ x, y, mode, frame, crushT = 0, blueT = 0, warpScale = 1, fallShrink = 1 }) => {
   const isHot = mode === 'mercHot', isCold = mode === 'mercCold', isFall = mode === 'fall';
-  const isPanic = isHot || isFall, isRelief = mode === 'relief', isCrush = mode === 'crush', isMars = mode === 'mars';
+  const isPanic = isHot || isFall || mode === 'shock', isRelief = mode === 'relief', isCrush = mode === 'crush', isMars = mode === 'mars';
   const sx = (isCrush ? 1 + crushT * 0.56 : 1) * warpScale * fallShrink;
   const sy = (isCrush ? 1 - crushT * 0.58 : 1) * warpScale * fallShrink;
   const rot = isFall ? (frame * 11) % 360 : warpScale < 0.96 ? (1 - warpScale) * 320 : 0;
@@ -52,8 +52,8 @@ const Udin2D: React.FC<{
       <rect x="-7" y="-8" width="14" height="13" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
       {isMars ? (
         <>
-          <g transform="translate(-7, -6) rotate(-52)"><rect x="-1.5" y="-1" width="4.2" height="9" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-1.5" y="6.5" width="4.2" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
-          <g transform="translate(7, -6) rotate(52)"><rect x="-2.7" y="-1" width="4.2" height="9" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-2.7" y="6.5" width="4.2" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
+          <g><rect x="-10" y="-8" width="4" height="4.5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-8.5" y="-9.2" width="5.2" height="3.2" fill="#dc2626" stroke="#0f172a" strokeWidth="1" /><rect x="-3.8" y="-9.2" width="3.4" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
+          <g><rect x="6" y="-8" width="4" height="4.5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="3.3" y="-9.2" width="5.2" height="3.2" fill="#dc2626" stroke="#0f172a" strokeWidth="1" /><rect x="0.4" y="-9.2" width="3.4" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
         </>
       ) : (
         <>
@@ -103,7 +103,7 @@ const MiniPlanetBadge: React.FC<{ x: number; y: number; r: number; fill: string;
     <circle cx={-r * 0.35} cy={-r * 0.35} r={r * 0.25} fill="#ffffff" opacity="0.45" />
     {label && (
       <g transform={`translate(0, ${r + 9})`}>
-        <rect x="-24" y="-6.5" width="48" height="10" rx="2.5" fill="rgba(15,23,42,0.88)" stroke={fill} strokeWidth="1" />
+        <rect x={label.length > 7 ? -29 : -23} y="-6.5" width={label.length > 7 ? 58 : 46} height="10" rx="2.5" fill="rgba(15,23,42,0.88)" stroke={fill} strokeWidth="1" />
         <text x="0" y="0.6" textAnchor="middle" fill="#ffffff" fontSize="5" fontWeight="bold" fontFamily="monospace">{label}</text>
       </g>
     )}
@@ -112,8 +112,8 @@ const MiniPlanetBadge: React.FC<{ x: number; y: number; r: number; fill: string;
 
 const PlanetStageBg: React.FC<{
   stage: string; frame: number; localF: number; mercNightT: number;
-  crushT: number; boltActive: boolean; boltSide: number;
-}> = ({ stage, frame, localF, mercNightT, crushT, boltActive, boltSide }) => {
+  crushT: number; boltActive: boolean; boltSide: number; isPortal: boolean;
+}> = ({ stage, frame, localF, mercNightT, crushT, boltActive, boltSide, isPortal }) => {
   if (stage === 'earth' || stage === 'back') {
     return (
       <g>
@@ -183,7 +183,7 @@ const PlanetStageBg: React.FC<{
           const p = ((frame + i * 7) % 14) / 14;
           return <ellipse key={i} cx={sx} cy={255 + (i % 3) * 18} rx={2 + p * 6} ry={1 + p * 2} fill="none" stroke="#bef264" strokeWidth="1.2" opacity={1 - p} />;
         })}
-        <g opacity={0.82 + Math.sin(frame * 0.5) * 0.16}>
+        <g opacity={isPortal ? 0 : 0.82 + Math.sin(frame * 0.5) * 0.16}>
           <rect x="86" y={pressY} width="98" height="5" fill="#ef4444" stroke="#0f172a" strokeWidth="1.2" />
           {[104, 135, 166].map((px, i) => (
             <polygon key={i} points={`${px - 6},${pressY + 6} ${px + 6},${pressY + 6} ${px},${pressY + 15}`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
@@ -246,15 +246,15 @@ export const PlanetSurvival: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const sec = frame / fps;
-  const { tEarthStat, tPortal, tMerc, tMercNight, tVenus, tMars, tJup, tBack, tCutStart, tCutEnd, tChoice, cliffFrame } = PS_TIMING;
+  const { tEarthStat, tPortal, tMerc, tMercNight, tVenus, tMars, tJup, tBack, tChoice, cliffFrame } = PS_TIMING;
   const stage = frame < tMerc ? 'earth' : frame < tVenus ? 'mercury' : frame < tMars ? 'venus' : frame < tJup ? 'mars' : frame < tBack ? 'jupiter' : 'back';
   const localF = stage === 'mercury' ? frame - tMerc : stage === 'venus' ? frame - tVenus : stage === 'mars' ? frame - tMars : stage === 'jupiter' ? frame - tJup : stage === 'back' ? frame - tBack : frame;
 
   const mercNightT = stage === 'mercury' ? interpolate(frame, [tMercNight - 4, tMercNight + 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const mercCold = mercNightT > 0.5;
 
-  const cutStart = tCutStart;
-  const cutEnd = Math.min(tChoice - 6, Math.max(cutStart + 86, tCutEnd));
+  const cutStart = tBack;
+  const cutEnd = Math.max(tBack + 100, tChoice - 6);
   const showCut = frame >= cutStart && frame <= cutEnd;
   const cutIn = showCut ? spring({ frame: frame - cutStart, fps, config: { damping: 12 } }) : 0;
   const cutScaleOut = showCut ? interpolate(frame, [cutEnd - 4, cutEnd], [1, 0.84], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 1;
@@ -299,7 +299,7 @@ export const PlanetSurvival: React.FC = () => {
     if (frame >= tr - 2 && frame <= tr + 3) portalFlash = Math.max(portalFlash, interpolate(frame, [tr - 2, tr, tr + 3], [0, 0.65, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }));
   }
   const isPortal = (frame >= portStart && frame < tMerc + 10) || transitions.some((tr) => Math.abs(frame - tr) < 11);
-  const udinMode: UdinMode = stage === 'earth' ? 'normal' : stage === 'mercury' ? (mercCold ? 'mercCold' : 'mercHot') : stage === 'venus' ? 'crush' : stage === 'mars' ? 'mars' : stage === 'jupiter' ? 'fall' : 'relief';
+  const udinMode: UdinMode = stage === 'earth' ? (isPortal ? 'shock' : 'normal') : stage === 'mercury' ? (mercCold ? 'mercCold' : 'mercHot') : stage === 'venus' ? 'crush' : stage === 'mars' ? 'mars' : stage === 'jupiter' ? 'fall' : 'relief';
   const introAlpha = stage === 'earth' ? interpolate(frame, [0, 8, tEarthStat - 8, tEarthStat], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const earthStatAlpha = stage === 'earth' ? interpolate(frame, [tEarthStat - 2, tEarthStat + 6, portStart - 4, portStart + 4], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const showChoices = stage === 'back' && !showCut && frame >= tChoice - 6;
@@ -316,7 +316,7 @@ export const PlanetSurvival: React.FC = () => {
       <Sequence from={tVenus + 8} durationInFrames={34}><Audio src={staticFile('sfx_ps_crush.wav')} volume={0.38} /></Sequence>
       <Sequence from={tMars + 4} durationInFrames={Math.min(180, marsDur)}><Audio src={staticFile('sfx_ps_wind.wav')} volume={0.24} /></Sequence>
       <Sequence from={tJup + 4} durationInFrames={Math.min(180, jupDur)}><Audio src={staticFile('sfx_ps_storm.wav')} volume={0.25} /></Sequence>
-      {jupBolts.map((bf, idx) => (<Sequence key={`th-${idx}-${bf}`} from={bf} durationInFrames={22}><Audio src={staticFile('sfx_ps_thunder.wav')} volume={0.42} /></Sequence>))}
+      {jupBolts.map((bf, idx) => (<Sequence key={`th-${idx}-${bf}`} from={bf} durationInFrames={22}><Audio src={staticFile('sfx_ps_thunder.wav')} volume={0.30} /></Sequence>))}
       <Sequence from={cutStart} durationInFrames={28}><Audio src={whoosh} volume={0.36} /></Sequence>
       <Sequence from={Math.max(0, cutEnd - 3)} durationInFrames={28}><Audio src={whoosh} volume={0.32} /></Sequence>
       <Sequence from={cliffFrame} durationInFrames={45}><Audio src={ding} volume={0.45} /></Sequence>
@@ -331,7 +331,7 @@ export const PlanetSurvival: React.FC = () => {
             <linearGradient id="venusSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#713f12" /><stop offset="55%" stopColor="#ca8a04" /><stop offset="100%" stopColor="#eab308" /></linearGradient>
             <linearGradient id="marsSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#431407" /><stop offset="55%" stopColor="#9a3412" /><stop offset="100%" stopColor="#ea580c" /></linearGradient>
           </defs>
-          <PlanetStageBg stage={stage} frame={frame} localF={localF} mercNightT={mercNightT} crushT={crushT} boltActive={boltActive} boltSide={boltIdx} />
+          <PlanetStageBg stage={stage} frame={frame} localF={localF} mercNightT={mercNightT} crushT={crushT} boltActive={boltActive} boltSide={boltIdx} isPortal={isPortal} />
           {introAlpha > 0.05 && (
             <g opacity={introAlpha}>
               {[{ fill: '#fb923c', r: 9, phase: 0 }, { fill: '#eab308', r: 10, phase: 1.55 }, { fill: '#f97316', r: 8.5, phase: 3.1 }, { fill: '#ef4444', r: 12, stripe: '#fdba74', phase: 4.65 }].map((pl, idx) => {
@@ -354,10 +354,10 @@ export const PlanetSurvival: React.FC = () => {
             </g>
           )}
           <Udin2D x={udinX} y={udinY} mode={udinMode} frame={frame} crushT={crushT} blueT={blueT} warpScale={warpScale} fallShrink={fallShrink} />
-          {stage === 'back' && !showCut && (
+          {showChoices && (
             <g transform={`translate(135, ${214 + Math.sin(frame * 0.22) * 3})`}>
-              <rect x="-22" y="-10" width="44" height="12" rx="3" fill="rgba(15,23,42,0.84)" stroke="#4ade80" strokeWidth="1.2" />
-              <text x="0" y="-2" textAnchor="middle" fill="#4ade80" fontSize="6" fontWeight="bold" fontFamily="monospace">FIUH...</text>
+              <rect x="-10" y="-12" width="20" height="14" rx="4" fill="rgba(15,23,42,0.9)" stroke="#facc15" strokeWidth="1.4" />
+              <text x="0" y="-2" textAnchor="middle" fill="#fde047" fontSize="9" fontWeight="bold" fontFamily="monospace">?</text>
             </g>
           )}
           {showChoices && (
@@ -400,7 +400,7 @@ export const PlanetSurvival: React.FC = () => {
         )}
       </div>
 
-      {showCut && <AbsoluteFill style={{ backgroundColor: 'rgba(15, 23, 42, 0.72)', zIndex: 35 }} />}
+      {showCut && <AbsoluteFill style={{ backgroundColor: 'rgba(15, 23, 42, 0.98)', zIndex: 35 }} />}
       {showCut && <AbsoluteFill style={{ transform: `scale(${(0.88 + cutIn * 0.12) * cutScaleOut})`, zIndex: 38 }}><CloseUpUdinPlanet frame={frame} localFrame={frame - cutStart} /></AbsoluteFill>}
       {cutOutFlash > 0.02 && <div style={{ position: 'absolute', top: 230, left: 60, right: 60, height: 1160, borderRadius: 28, backgroundColor: '#ffffff', opacity: cutOutFlash, zIndex: 40, pointerEvents: 'none' }} />}
 
