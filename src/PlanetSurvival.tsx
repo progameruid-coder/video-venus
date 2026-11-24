@@ -19,15 +19,15 @@ type UdinMode = 'normal' | 'shock' | 'mercHot' | 'mercCold' | 'crush' | 'mars' |
 
 const Udin2D: React.FC<{
   x: number; y: number; mode: UdinMode; frame: number;
-  crushT?: number; blueT?: number; warpScale?: number; fallShrink?: number;
-}> = ({ x, y, mode, frame, crushT = 0, blueT = 0, warpScale = 1, fallShrink = 1 }) => {
+  crushT?: number; blueT?: number; warpScale?: number; fallShrink?: number; freezeT?: number; isPortal?: boolean;
+}> = ({ x, y, mode, frame, crushT = 0, blueT = 0, warpScale = 1, fallShrink = 1, freezeT = 0, isPortal = false }) => {
   const isHot = mode === 'mercHot', isCold = mode === 'mercCold', isFall = mode === 'fall';
   const isPanic = isHot || isFall || mode === 'shock', isRelief = mode === 'relief', isCrush = mode === 'crush', isMars = mode === 'mars';
   const sx = (isCrush ? 1 + crushT * 0.56 : 1) * warpScale * fallShrink;
   const sy = (isCrush ? 1 - crushT * 0.58 : 1) * warpScale * fallShrink;
   const rot = isFall ? (frame * 11) % 360 : warpScale < 0.96 ? (1 - warpScale) * 320 : 0;
   const shiv = isCold ? Math.sin(frame * 1.9) * 1.9 : isMars ? Math.sin(frame * 1.6) * (0.9 + blueT * 1.7) : isCrush ? Math.sin(frame * 1.9) * 1.4 : 0;
-  const bob = isHot ? Math.abs(Math.sin(frame * 0.52)) * -3.5 : mode === 'normal' ? Math.sin(frame * 0.22) * 1.5 : 0;
+  const bob = isHot ? Math.abs(Math.sin(frame * 0.52)) * -3.5 : mode === 'normal' ? Math.sin(frame * 0.22) * 1.5 : isRelief ? Math.sin(frame * 0.2) * 1.1 : 0;
   const fl = isPanic ? Math.sin(frame * 0.72) * 20 : 0;
   const waveArm = mode === 'normal' ? -135 + Math.sin(frame * 0.32) * 24 : 0;
   const skin = isHot || isCrush ? '#fb7185' : isCold ? '#7dd3fc' : isMars ? (blueT > 0.45 ? '#93c5fd' : '#c4b5fd') : '#fed7aa';
@@ -52,13 +52,13 @@ const Udin2D: React.FC<{
       <rect x="-7" y="-8" width="14" height="13" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
       {isMars ? (
         <>
-          <g><rect x="-10" y="-8" width="4" height="4.5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-8.5" y="-9.2" width="5.2" height="3.2" fill="#dc2626" stroke="#0f172a" strokeWidth="1" /><rect x="-3.8" y="-9.2" width="3.4" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
-          <g><rect x="6" y="-8" width="4" height="4.5" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="3.3" y="-9.2" width="5.2" height="3.2" fill="#dc2626" stroke="#0f172a" strokeWidth="1" /><rect x="0.4" y="-9.2" width="3.4" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
+          <g transform={`translate(0, ${Math.sin(frame * 0.9) * 0.9})`}><polygon points="-7,-6 -12,-5 -11,-1 -6,-2" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><polygon points="-11,-4 -4,-10 -2,-7 -9,-1" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-4.5" y="-11" width="3.8" height="3.6" rx="0.8" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
+          <g transform={`translate(0, ${Math.sin(frame * 0.9 + 1) * 0.9})`}><polygon points="7,-6 12,-5 11,-1 6,-2" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><polygon points="11,-4 4,-10 2,-7 9,-1" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="0.7" y="-11" width="3.8" height="3.6" rx="0.8" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
         </>
       ) : (
         <>
-          <g transform={`translate(-7, -6) rotate(${isPanic ? 132 + fl : isCold ? -24 : isCrush ? 108 : isRelief ? 28 : 8})`}><rect x="-2.5" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2.5" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
-          <g transform={`translate(7, -6) rotate(${isPanic ? -132 - fl : isCold ? 24 : isCrush ? -108 : isRelief ? -28 : waveArm})`}><rect x="-2" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
+          <g transform={`translate(-7, -6) rotate(${isPanic ? 132 + fl : isCold ? -24 : isCrush ? 108 : isRelief ? 28 + Math.sin(frame * 0.22) * 9 : 8})`}><rect x="-2.5" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2.5" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
+          <g transform={`translate(7, -6) rotate(${isPanic ? -132 - fl : isCold ? 24 : isCrush ? -108 : isRelief ? -28 - Math.sin(frame * 0.22) * 9 : waveArm})`}><rect x="-2" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
         </>
       )}
       <rect x="-6" y="-19" width="12" height="11" fill={skin} stroke="#0f172a" strokeWidth="1.4" />
@@ -67,9 +67,9 @@ const Udin2D: React.FC<{
       {isMars ? (
         <><ellipse cx="-4.6" cy="-11.2" rx="2.5" ry="2.2" fill={blueT > 0.45 ? '#60a5fa' : '#a78bfa'} stroke="#0f172a" strokeWidth="0.7" /><ellipse cx="4.6" cy="-11.2" rx="2.5" ry="2.2" fill={blueT > 0.45 ? '#60a5fa' : '#a78bfa'} stroke="#0f172a" strokeWidth="0.7" /><rect x="-2.2" y="-11.6" width="4.4" height="1.4" fill="#0f172a" /></>
       ) : isRelief ? (<rect x="-2" y="-11" width="4" height="1.5" fill="#15803d" />) : (isPanic || isCrush || isCold) ? (<rect x="-2" y="-11.5" width="4" height="2.6" fill="#7f1d1d" />) : null}
-      {(isHot || isCrush) && [-4, 4].map((hx, i) => { const hp = ((frame + i * 10) % 20) / 20; return <rect key={i} x={hx} y={-26 - hp * 10} width="2.8" height="3.5" fill="#ffffff" opacity={Math.sin(hp * Math.PI) * 0.85} />; })}
-      {isMars && (<g transform={`translate(0, ${-31 + Math.sin(frame * 0.3) * 1.8})`}><rect x="-17" y="-8" width="34" height="10" rx="2" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.2" /><text x="0" y="-1" textAnchor="middle" fill="#38bdf8" fontSize="5.2" fontWeight="bold" fontFamily="monospace">O2: 0%</text></g>)}
-      {isCold && (<g><rect x="-11" y="-23" width="22" height="38" fill="#bae6fd" fillOpacity="0.38" stroke="#e0f2fe" strokeWidth="1.6" /><line x1="-8" y1="-16" x2="-2" y2="-20" stroke="#ffffff" strokeWidth="1.5" opacity="0.88" /><line x1="2" y1="2" x2="8" y2="-4" stroke="#ffffff" strokeWidth="1.4" opacity="0.78" /></g>)}
+      {(isHot || isCrush) && (isCrush ? [-11, 11] : [-4, 4]).map((hx, i) => { const hp = ((frame + i * 10) % 20) / 20; return <rect key={i} x={hx} y={(isCrush ? -16 : -26) - hp * 10} width="2.8" height="3.5" fill="#ffffff" opacity={Math.sin(hp * Math.PI) * 0.85} />; })}
+      {isMars && !isPortal && (<g transform={`translate(0, ${-31 + Math.sin(frame * 0.3) * 1.8})`}><rect x="-17" y="-8" width="34" height="10" rx="2" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.2" /><text x="0" y="-1" textAnchor="middle" fill="#38bdf8" fontSize="5.2" fontWeight="bold" fontFamily="monospace">O2: 0%</text></g>)}
+      {freezeT > 0.02 && (<g opacity={freezeT} transform={`scale(${0.72 + freezeT * 0.28})`}><rect x="-11" y="-23" width="22" height="38" fill="#bae6fd" fillOpacity="0.38" stroke="#e0f2fe" strokeWidth="1.6" /><line x1="-8" y1="-16" x2="-2" y2="-20" stroke="#ffffff" strokeWidth="1.5" opacity="0.88" /><line x1="2" y1="2" x2="8" y2="-4" stroke="#ffffff" strokeWidth="1.4" opacity="0.78" /></g>)}
     </g>
   );
 };
@@ -95,10 +95,10 @@ const PixelBird: React.FC<{ x: number; y: number; frame: number }> = ({ x, y, fr
   return <g transform={`translate(${x}, ${y})`} stroke="#0f172a" strokeWidth="1.4" fill="none"><polyline points={`-5,${wing} 0,0 5,${wing}`} /></g>;
 };
 
-const MiniPlanetBadge: React.FC<{ x: number; y: number; r: number; fill: string; stripe?: string; label?: string; scale?: number }> = ({ x, y, r, fill, stripe, label, scale = 1 }) => (
+const MiniPlanetBadge: React.FC<{ x: number; y: number; r: number; fill: string; stripe?: string; half?: string; label?: string; scale?: number }> = ({ x, y, r, fill, stripe, half, label, scale = 1 }) => (
   <g transform={`translate(${x}, ${y}) scale(${scale})`}>
     <circle cx="0" cy="0" r={r + 2.2} fill="rgba(15,23,42,0.55)" />
-    <circle cx="0" cy="0" r={r} fill={fill} stroke="#0f172a" strokeWidth="1.4" />
+    <circle cx="0" cy="0" r={r} fill={fill} stroke="#0f172a" strokeWidth="1.4" />{half && <path d={`M0,${-r} A${r},${r} 0 0,1 0,${r} Z`} fill={half} stroke="#0f172a" strokeWidth="1" />}
     {stripe && <rect x={-r + 2} y="-2" width={(r - 2) * 2} height="3.4" fill={stripe} opacity="0.8" />}
     <circle cx={-r * 0.35} cy={-r * 0.35} r={r * 0.25} fill="#ffffff" opacity="0.45" />
     {label && (
@@ -158,7 +158,7 @@ const PlanetStageBg: React.FC<{
     );
   }
   if (stage === 'venus') {
-    const pressY = interpolate(crushT, [0, 1], [186, 224]) + Math.sin(frame * 0.8) * 1.4;
+    const pressIn = interpolate(localF, [10, 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }); const pressY = interpolate(pressIn, [0, 1], [138, 186]) + interpolate(crushT, [0, 1], [0, 45]) + Math.sin(frame * 0.8) * 1.4;
     return (
       <g>
         <rect width="270" height="205" fill="url(#venusSky)" />
@@ -183,7 +183,7 @@ const PlanetStageBg: React.FC<{
           const p = ((frame + i * 7) % 14) / 14;
           return <ellipse key={i} cx={sx} cy={255 + (i % 3) * 18} rx={2 + p * 6} ry={1 + p * 2} fill="none" stroke="#bef264" strokeWidth="1.2" opacity={1 - p} />;
         })}
-        <g opacity={isPortal ? 0 : 0.82 + Math.sin(frame * 0.5) * 0.16}>
+        <g opacity={isPortal ? 0 : pressIn * (0.82 + Math.sin(frame * 0.5) * 0.16)}>
           <rect x="86" y={pressY} width="98" height="5" fill="#ef4444" stroke="#0f172a" strokeWidth="1.2" />
           {[104, 135, 166].map((px, i) => (
             <polygon key={i} points={`${px - 6},${pressY + 6} ${px + 6},${pressY + 6} ${px},${pressY + 15}`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
@@ -251,13 +251,13 @@ export const PlanetSurvival: React.FC = () => {
   const localF = stage === 'mercury' ? frame - tMerc : stage === 'venus' ? frame - tVenus : stage === 'mars' ? frame - tMars : stage === 'jupiter' ? frame - tJup : stage === 'back' ? frame - tBack : frame;
 
   const mercNightT = stage === 'mercury' ? interpolate(frame, [tMercNight - 4, tMercNight + 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
-  const mercCold = mercNightT > 0.5;
+  const mercCold = mercNightT > 0.5; const freezeT = stage === 'mercury' ? interpolate(mercNightT, [0.45, 0.78], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
 
   const cutStart = tBack;
   const cutEnd = Math.max(tBack + 100, tChoice - 6);
   const showCut = frame >= cutStart && frame <= cutEnd;
   const cutIn = showCut ? spring({ frame: frame - cutStart, fps, config: { damping: 12 } }) : 0;
-  const cutScaleOut = showCut ? interpolate(frame, [cutEnd - 4, cutEnd], [1, 0.84], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 1;
+  const cutScaleOut = showCut ? interpolate(frame, [cutEnd - 4, cutEnd], [1, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 1;
   const cutOutFlash = frame >= cutEnd - 2 && frame <= cutEnd + 3 ? interpolate(frame, [cutEnd - 2, cutEnd, cutEnd + 3], [0, 0.92, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
 
   const showCliff = frame >= cliffFrame;
@@ -334,13 +334,13 @@ export const PlanetSurvival: React.FC = () => {
           <PlanetStageBg stage={stage} frame={frame} localF={localF} mercNightT={mercNightT} crushT={crushT} boltActive={boltActive} boltSide={boltIdx} isPortal={isPortal} />
           {introAlpha > 0.05 && (
             <g opacity={introAlpha}>
-              {[{ fill: '#fb923c', r: 9, phase: 0 }, { fill: '#eab308', r: 10, phase: 1.55 }, { fill: '#f97316', r: 8.5, phase: 3.1 }, { fill: '#ef4444', r: 12, stripe: '#fdba74', phase: 4.65 }].map((pl, idx) => {
+              {[{ fill: '#fb923c', half: '#38bdf8', r: 9, phase: 0 }, { fill: '#eab308', r: 10, phase: 1.55 }, { fill: '#f97316', r: 8.5, phase: 3.1 }, { fill: '#ef4444', r: 12, stripe: '#fdba74', phase: 4.65 }].map((pl, idx) => {
                 const ang = frame * 0.055 + pl.phase;
-                return <MiniPlanetBadge key={idx} x={135 + Math.cos(ang) * 76} y={148 + Math.sin(ang) * 16} r={pl.r} fill={pl.fill} stripe={pl.stripe} />;
+                return <MiniPlanetBadge key={idx} x={135 + Math.cos(ang) * 76} y={148 + Math.sin(ang) * 16} r={pl.r} fill={pl.fill} stripe={pl.stripe} half={pl.half} />;
               })}
             </g>
           )}
-          {stage === 'jupiter' && (
+          {stage === 'jupiter' && !isPortal && (
             <g transform={`translate(${udinX}, ${udinY}) rotate(${frame * 14})`} opacity="0.72" fill="none" stroke="#fef08a">
               <path d="M-26,-6 A28,12 0 0,1 26,-6" strokeWidth="2.2" />
               <path d="M24,8 A26,11 0 0,1 -24,8" strokeWidth="2" />
@@ -353,7 +353,7 @@ export const PlanetSurvival: React.FC = () => {
               <rect x="-6" y="-6" width="12" height="12" fill="#ffffff" />
             </g>
           )}
-          <Udin2D x={udinX} y={udinY} mode={udinMode} frame={frame} crushT={crushT} blueT={blueT} warpScale={warpScale} fallShrink={fallShrink} />
+          <Udin2D x={udinX} y={udinY} mode={udinMode} frame={frame} crushT={crushT} blueT={blueT} warpScale={warpScale} fallShrink={fallShrink} freezeT={freezeT} isPortal={isPortal} />
           {showChoices && (
             <g transform={`translate(135, ${214 + Math.sin(frame * 0.22) * 3})`}>
               <rect x="-10" y="-12" width="20" height="14" rx="4" fill="rgba(15,23,42,0.9)" stroke="#facc15" strokeWidth="1.4" />
@@ -362,8 +362,8 @@ export const PlanetSurvival: React.FC = () => {
           )}
           {showChoices && (
             <g>
-              {[{ x: 42, y: 122, r: 13, fill: '#fb923c', label: 'MERKURIUS' }, { x: 104, y: 106, r: 14, fill: '#eab308', label: 'VENUS' }, { x: 166, y: 106, r: 13, fill: '#f97316', label: 'MARS' }, { x: 228, y: 122, r: 16, fill: '#ef4444', stripe: '#fdba74', label: 'JUPITER' }].map((pl, idx) => (
-                <MiniPlanetBadge key={pl.label} x={pl.x} y={pl.y + Math.sin(frame * 0.22 + idx * 1.1) * 4} r={pl.r} fill={pl.fill} stripe={pl.stripe} label={pl.label} scale={choicePop} />
+              {[{ x: 42, y: 122, r: 13, fill: '#fb923c', half: '#38bdf8', label: 'MERKURIUS' }, { x: 104, y: 106, r: 14, fill: '#eab308', label: 'VENUS' }, { x: 166, y: 106, r: 13, fill: '#f97316', label: 'MARS' }, { x: 228, y: 122, r: 16, fill: '#ef4444', stripe: '#fdba74', label: 'JUPITER' }].map((pl, idx) => (
+                <MiniPlanetBadge key={pl.label} x={pl.x} y={pl.y + Math.sin(frame * 0.22 + idx * 1.1) * 4} r={pl.r} fill={pl.fill} stripe={pl.stripe} half={pl.half} label={pl.label} scale={choicePop} />
               ))}
             </g>
           )}
@@ -400,8 +400,8 @@ export const PlanetSurvival: React.FC = () => {
         )}
       </div>
 
-      {showCut && <AbsoluteFill style={{ backgroundColor: 'rgba(15, 23, 42, 0.98)', zIndex: 35 }} />}
-      {showCut && <AbsoluteFill style={{ transform: `scale(${(0.88 + cutIn * 0.12) * cutScaleOut})`, zIndex: 38 }}><CloseUpUdinPlanet frame={frame} localFrame={frame - cutStart} /></AbsoluteFill>}
+      {showCut && <div style={{ position: 'absolute', top: 230, left: 60, right: 60, height: 1160, borderRadius: 28, backgroundColor: '#0f172a', zIndex: 35 }} />}
+      {showCut && <AbsoluteFill style={{ transform: `scale(${(0.94 + cutIn * 0.06) * cutScaleOut})`, transformOrigin: '50% 42%', zIndex: 38 }}><CloseUpUdinPlanet frame={frame} localFrame={frame - cutStart} /></AbsoluteFill>}
       {cutOutFlash > 0.02 && <div style={{ position: 'absolute', top: 230, left: 60, right: 60, height: 1160, borderRadius: 28, backgroundColor: '#ffffff', opacity: cutOutFlash, zIndex: 40, pointerEvents: 'none' }} />}
 
       <div style={{ position: 'absolute', top: 68, left: '50%', transform: 'translateX(-50%)', padding: '5px 18px', borderRadius: 20, backgroundColor: 'rgba(15, 23, 42, 0.85)', border: '2px solid rgba(250, 204, 21, 0.65)', fontFamily: 'sans-serif', fontSize: 21, fontWeight: 'bold', color: '#f8fafc', zIndex: 45 }}>@dysesat</div>
