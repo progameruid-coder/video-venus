@@ -15,39 +15,41 @@ const getWordColor = (w: string) => {
 };
 type SleepMode = 'fresh' | 'drunk' | 'micro' | 'panic' | 'dizzy' | 'shut' | 'morning';
 
-const UdinSleep2D: React.FC<{ x: number; y: number; mode: SleepMode; frame: number; nod?: number; fallT?: number }> = ({ x, y, mode, frame, nod = 0, fallT = 0 }) => {
-  const sway = mode === 'drunk' ? Math.sin(frame * 0.14) * 9 : mode === 'dizzy' ? Math.sin(frame * 0.22) * 12 : mode === 'shut' ? -fallT * 90 : 0;
-  const shiv = mode === 'panic' ? Math.sin(frame * 1.9) * 1.6 : 0;
-  const bob = mode === 'fresh' || mode === 'morning' ? Math.sin(frame * 0.2) * 1.2 : 0;
+const UdinSleep2D: React.FC<{ x: number; y: number; mode: SleepMode; frame: number; nod?: number; jolt?: boolean; fallT?: number }> = ({ x, y, mode, frame, nod = 0, jolt = false, fallT = 0 }) => {
+  const sway = mode === 'drunk' ? Math.sin(frame * 0.14) * 8 : mode === 'dizzy' ? Math.sin(frame * 0.22) * 10 : mode === 'shut' ? -fallT * 90 : 0;
+  const shiv = mode === 'panic' ? Math.sin(frame * 1.9) * 1.8 : 0;
+  const bob = jolt ? -4 : mode === 'fresh' || mode === 'morning' ? Math.sin(frame * 0.2) * 1.4 : 0;
   const skin = mode === 'panic' ? '#ddd6fe' : mode === 'dizzy' ? '#dcfce7' : '#fed7aa';
   const tired = mode !== 'fresh' && mode !== 'morning';
   const closed = (mode === 'micro' && nod > 0.45) || (mode === 'shut' && fallT > 0.35) || (mode === 'fresh' && frame % 85 > 80);
-  const armL = mode === 'panic' || mode === 'dizzy' ? 138 : mode === 'fresh' ? 40 : mode === 'morning' ? 145 : 14;
+  const armL = mode === 'panic' || mode === 'dizzy' ? 135 : mode === 'fresh' ? 36 : mode === 'morning' ? 16 + Math.sin(frame * 0.16) * 6 : 14;
+  const armR = mode === 'panic' || mode === 'dizzy' ? -135 : mode === 'fresh' ? -36 : mode === 'morning' ? -118 + Math.sin(frame * 0.26) * 14 : -14;
   return (
-    <g transform={`translate(${x + shiv}, ${y + bob}) rotate(${sway})`}>
-      <ellipse cx="0" cy="14" rx="11" ry="3" fill="rgba(15,23,42,0.32)" />
-      <rect x="-5" y="4" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
-      <rect x="1" y="4" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.2" />
-      <rect x="-7" y="-8" width="14" height="13" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
+    <g transform={`translate(${x + shiv}, ${y + bob}) rotate(${sway}) scale(1.62)`}>
+      {fallT < 0.5 && <ellipse cx="0" cy="14" rx="11" ry="3" fill="rgba(15,23,42,0.32)" />}
+      <rect x="-5" y="4" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.1" />
+      <rect x="1" y="4" width="4" height="10" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.1" />
+      <rect x="-7" y="-8" width="14" height="13" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" />
       <g transform={`translate(-7, -6) rotate(${armL})`}>
-        <rect x="-2.5" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" />
-        <rect x="-2.5" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" />
-        {mode === 'fresh' && <rect x="-3" y="9" width="5" height="5" fill="#f8fafc" stroke="#0f172a" strokeWidth="0.9" />}
+        <rect x="-2.5" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" />
+        <rect x="-2.5" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="0.9" />
+        {mode === 'fresh' && <rect x="-3" y="9" width="5" height="5" fill="#f8fafc" stroke="#0f172a" strokeWidth="0.8" />}
       </g>
-      <g transform={`translate(7, -6) rotate(${-armL})`}>
-        <rect x="-2" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" />
-        <rect x="-2" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" />
-        {mode === 'fresh' && <rect x="-1" y="8" width="4" height="6" rx="0.8" fill="#38bdf8" stroke="#0f172a" strokeWidth="0.9" />}
+      <g transform={`translate(7, -6) rotate(${armR})`}>
+        <rect x="-2" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" />
+        <rect x="-2" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="0.9" />
+        {mode === 'fresh' && <rect x="-1" y="8" width="4" height="6" rx="0.8" fill="#38bdf8" stroke="#0f172a" strokeWidth="0.8" />}
       </g>
       <g transform={`translate(0, ${nod * 3.5}) rotate(${nod * 24})`}>
-        <rect x="-6" y="-19" width="12" height="11" fill={skin} stroke="#0f172a" strokeWidth="1.4" />
+        <rect x="-6" y="-19" width="12" height="11" fill={skin} stroke="#0f172a" strokeWidth="1.2" />
         <rect x="-6" y="-21" width="12" height="4" fill="#29150b" />
         {tired && <><rect x="-4.5" y="-12.5" width="3.8" height="1.5" fill="#4338ca" opacity="0.65" /><rect x="0.8" y="-12.5" width="3.8" height="1.5" fill="#4338ca" opacity="0.65" /></>}
         {closed ? (<><rect x="-4" y="-14" width="3" height="1.2" fill="#0f172a" /><rect x="1" y="-14" width="3" height="1.2" fill="#0f172a" /></>) : (
           <><rect x="-4.5" y="-15.5" width="3.5" height="3" fill={tired ? '#fca5a5' : '#ffffff'} /><rect x="1" y="-15.5" width="3.5" height="3" fill={tired ? '#fca5a5' : '#ffffff'} /><rect x="-3.2" y="-14.8" width="1.8" height="1.8" fill="#0f172a" /><rect x="2.2" y="-14.8" width="1.8" height="1.8" fill="#0f172a" /></>
         )}
-        <rect x="-2" y="-10.8" width="4" height={mode === 'panic' || mode === 'morning' ? 2.6 : 1.4} fill={mode === 'panic' ? '#7f1d1d' : '#0f172a'} />
-        {(mode === 'drunk' || mode === 'dizzy') && [0, 1, 2].map((i) => (<circle key={i} cx={Math.cos(frame * 0.22 + i * 2.1) * 9} cy={-24 + Math.sin(frame * 0.22 + i * 2.1) * 2.5} r="1.8" fill="#fde047" />))}
+        <rect x="-2" y="-10.8" width="4" height={mode === 'panic' || jolt ? 2.6 : 1.4} fill={mode === 'panic' ? '#7f1d1d' : '#0f172a'} />
+        {(mode === 'drunk' || mode === 'dizzy') && [0, 1, 2].map((i) => (<circle key={i} cx={Math.cos(frame * 0.22 + i * 2.1) * 9} cy={-24 + Math.sin(frame * 0.22 + i * 2.1) * 2.5} r="1.6" fill="#fde047" />))}
+        {jolt && <text x="0" y="-25" textAnchor="middle" fill="#fde047" stroke="#ef4444" strokeWidth="0.6" fontSize="10" fontWeight="bold" fontFamily="monospace">!</text>}
       </g>
     </g>
   );
@@ -67,14 +69,14 @@ const RoomStageBg: React.FC<{ stage: string; frame: number; shadowT: number; eye
   const mugs = stage === 'start' ? 1 : stage === 'h24' ? 2 : isMorn ? 0 : 4;
   return (
     <g>
-      <rect width="270" height="240" fill={wallFill} />
-      <rect y="236" width="270" height="7" fill={isMorn ? '#d97706' : '#334155'} stroke="#0f172a" strokeWidth="1.2" />
-      <rect y="243" width="270" height="87" fill={isMorn ? '#b45309' : '#29150b'} />
-      <g transform="translate(16, 114)">
+      <rect x="-60" y="-60" width="390" height="292" fill={wallFill} />
+      <rect x="-60" y="226" width="390" height="8" fill={isMorn ? '#d97706' : '#334155'} stroke="#0f172a" strokeWidth="1.2" />
+      <rect x="-60" y="234" width="390" height="160" fill={isMorn ? '#b45309' : '#29150b'} />
+      <g transform="translate(14, 114)">
         <rect width="34" height="40" rx="2" fill="#1e1b4b" stroke="#78350f" strokeWidth="2.2" />
         <circle cx="17" cy="19" r="7" fill="#f97316" /><ellipse cx="17" cy="19" rx="12" ry="3.2" fill="none" stroke="#fde047" strokeWidth="1.4" transform="rotate(-18, 17, 19)" />
       </g>
-      <g transform="translate(86, 128)">
+      <g transform="translate(82, 128)">
         <circle r="14" fill="#f8fafc" stroke="#0f172a" strokeWidth="2" />
         <line x1="0" y1="0" x2={Math.sin(frame * 0.05 * clkSp) * 8} y2={-Math.cos(frame * 0.05 * clkSp) * 8} stroke="#0f172a" strokeWidth="1.6" />
         <line x1="0" y1="0" x2={Math.sin(frame * 0.25 * clkSp) * 11} y2={-Math.cos(frame * 0.25 * clkSp) * 11} stroke="#dc2626" strokeWidth="1.2" />
@@ -86,16 +88,16 @@ const RoomStageBg: React.FC<{ stage: string; frame: number; shadowT: number; eye
         <line x1="34" y1="0" x2="34" y2="62" stroke="#78350f" strokeWidth="2" /><line x1="0" y1="31" x2="68" y2="31" stroke="#78350f" strokeWidth="2" />
       </g>
       {isMorn && <polygon points="168,170 236,170 184,295 104,295" fill="#fef08a" opacity="0.16" />}
-      <ellipse cx="144" cy="284" rx="64" ry="13" fill={isMorn ? '#38bdf8' : '#1e293b'} stroke="#0f172a" strokeWidth="1.4" opacity="0.85" />
-      <g transform="translate(14, 212)">
-        <rect x="0" y="-12" width="12" height="58" rx="2" fill="#78350f" stroke="#0f172a" strokeWidth="1.6" />
-        <rect x="10" y="10" width="98" height="24" rx="3" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1.6" />
-        <ellipse cx="26" cy="8" rx="14" ry="6" fill="#ffffff" stroke="#0f172a" strokeWidth="1.4" />
-        <rect x="44" y="10" width="64" height="24" rx="3" fill="#2563eb" stroke="#0f172a" strokeWidth="1.6" />
-        <rect x="10" y="34" width="98" height="10" fill="#92400e" stroke="#0f172a" strokeWidth="1.6" />
+      <ellipse cx="144" cy="288" rx="68" ry="15" fill={isMorn ? '#38bdf8' : '#1e293b'} stroke="#0f172a" strokeWidth="1.4" opacity="0.85" />
+      <g transform="translate(8, 206)">
+        <rect x="0" y="-14" width="12" height="62" rx="2" fill="#78350f" stroke="#0f172a" strokeWidth="1.6" />
+        <rect x="10" y="10" width="104" height="26" rx="3" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1.6" />
+        <ellipse cx="28" cy="8" rx="16" ry="6.5" fill="#ffffff" stroke="#0f172a" strokeWidth="1.4" />
+        <rect x="48" y="10" width="66" height="26" rx="3" fill="#2563eb" stroke="#0f172a" strokeWidth="1.6" />
+        <rect x="10" y="36" width="104" height="11" fill="#92400e" stroke="#0f172a" strokeWidth="1.6" />
       </g>
-      <g transform="translate(182, 222)">
-        <rect width="50" height="42" rx="2" fill="#78350f" stroke="#0f172a" strokeWidth="1.6" />
+      <g transform="translate(186, 218)">
+        <rect width="50" height="44" rx="2" fill="#78350f" stroke="#0f172a" strokeWidth="1.6" />
         <rect x="6" y="7" width="38" height="12" fill="#92400e" stroke="#0f172a" strokeWidth="1.2" /><circle cx="25" cy="13" r="2" fill="#fde047" />
         <rect x="30" y="-10" width="4" height="10" fill="#475569" /><polygon points="22,-22 42,-22 46,-10 18,-10" fill={isMorn ? '#fde047' : '#f59e0b'} stroke="#0f172a" strokeWidth="1.3" />
         {Array.from({ length: mugs }).map((_, i) => (<rect key={i} x={4 + (i % 2) * 10} y={-7 - Math.floor(i / 2) * 7} width="7" height="7" fill="#f8fafc" stroke="#0f172a" strokeWidth="1" />))}
@@ -106,26 +108,41 @@ const RoomStageBg: React.FC<{ stage: string; frame: number; shadowT: number; eye
           <rect x="18" y="152" width="7" height="12" fill="#ef4444" stroke="#0f172a" strokeWidth="1" />
           <rect x="26" y="150" width="7" height="14" fill="#38bdf8" stroke="#0f172a" strokeWidth="1" />
           <rect x="34" y="154" width="8" height="10" fill="#4ade80" stroke="#0f172a" strokeWidth="1" />
-          <g transform="translate(192, 214)"><polygon points="-6,8 6,8 8,0 -8,0" fill="#ea580c" stroke="#0f172a" strokeWidth="1.1" /><circle cx="0" cy="-5" r="6" fill="#22c55e" stroke="#0f172a" strokeWidth="1.1" /></g>
-          <g transform={`translate(192, ${284 + Math.sin(frame * 0.14) * 0.7})`}>
-            <ellipse cx="0" cy="0" rx="11" ry="6" fill="#fb923c" stroke="#0f172a" strokeWidth="1.2" />
-            <circle cx="-7" cy="-3" r="5" fill="#fb923c" stroke="#0f172a" strokeWidth="1.2" />
-            <polygon points="-11,-7 -9,-12 -6,-7" fill="#fb923c" stroke="#0f172a" strokeWidth="1" />
-            <polygon points="-6,-7 -4,-12 -2,-7" fill="#fb923c" stroke="#0f172a" strokeWidth="1" />
+          <g transform="translate(196, 210)"><polygon points="-6,8 6,8 8,0 -8,0" fill="#ea580c" stroke="#0f172a" strokeWidth="1.1" /><circle cx="0" cy="-5" r="6" fill="#22c55e" stroke="#0f172a" strokeWidth="1.1" /></g>
+          <g transform={`translate(196, ${288 + Math.sin(frame * 0.14) * 0.7})`}>
+            <ellipse cx="0" cy="0" rx="11" ry="6" fill="#fb923c" stroke="#0f172a" strokeWidth="1.2" /><circle cx="-7" cy="-3" r="5" fill="#fb923c" stroke="#0f172a" strokeWidth="1.2" />
+            <polygon points="-11,-7 -9,-12 -6,-7" fill="#fb923c" stroke="#0f172a" strokeWidth="1" /><polygon points="-6,-7 -4,-12 -2,-7" fill="#fb923c" stroke="#0f172a" strokeWidth="1" />
             <line x1="-9" y1="-3" x2="-6" y2="-3" stroke="#0f172a" strokeWidth="1.1" />
           </g>
         </g>
       )}
-      {stage === 'h72' && shadowT > 0.01 && (
-        <g transform={`translate(148, ${188 + Math.sin(frame * 0.1) * 3}) scale(${0.86 + shadowT * 0.2})`} opacity={shadowT}>
-          <path d="M-46,66 Q-58,4 -34,-44 C-18,-72 18,-72 34,-44 Q58,4 46,66 Z" fill="#020617" />
-          <path d={`M-38,14 Q${-86 + Math.sin(frame * 0.14) * 8},-12 ${-74 + Math.cos(frame * 0.12) * 6},-48 Q-58,-18 -30,0 Z`} fill="#020617" />
-          <path d={`M38,14 Q${86 - Math.sin(frame * 0.14) * 8},-12 ${74 - Math.cos(frame * 0.12) * 6},-48 Q58,-18 30,0 Z`} fill="#020617" />
-          {eyesT > 0.02 && (<g opacity={eyesT}><circle cx="-15" cy="-26" r="8" fill="#ef4444" opacity="0.34" /><circle cx="15" cy="-26" r="8" fill="#ef4444" opacity="0.34" /><polygon points="-22,-30 -8,-24 -20,-21" fill="#fde047" /><polygon points="22,-30 8,-24 20,-21" fill="#fde047" /><circle cx="-15" cy="-25" r="1.8" fill="#7f1d1d" /><circle cx="15" cy="-25" r="1.8" fill="#7f1d1d" /></g>)}
+      {stage === 'h72' && shadowT > 0.01 && (() => {
+        const w1 = Math.sin(frame * 0.12) * 7, w2 = Math.cos(frame * 0.11) * 6;
+        const body = (
+          <>
+            <path d="M-24,84 Q-32,12 -22,-32 C-16,-62 16,-62 22,-32 Q32,12 24,84 Z" />
+            <path d={`M-22,-10 Q${-64 + w1},-22 ${-74 + w2},14 Q-52,-2 -20,10 Z`} />
+            <path d={`M22,-10 Q${64 - w1},-22 ${74 - w2},14 Q52,-2 20,10 Z`} />
+          </>
+        );
+        return (
+          <g transform={`translate(150, ${184 + Math.sin(frame * 0.09) * 3}) scale(${0.88 + shadowT * 0.18})`} opacity={shadowT}>
+            <g transform="scale(1.09)" fill="#020617" opacity="0.4">{body}</g>
+            <g fill="#010409">{body}</g>
+            {eyesT > 0.02 && (<g opacity={eyesT}><circle cx="-10" cy="-34" r="7" fill="#ef4444" opacity="0.34" /><circle cx="10" cy="-34" r="7" fill="#ef4444" opacity="0.34" /><polygon points="-16,-37 -5,-32 -14,-30" fill="#fde047" /><polygon points="16,-37 5,-32 14,-30" fill="#fde047" /><circle cx="-10" cy="-33" r="1.6" fill="#7f1d1d" /><circle cx="10" cy="-33" r="1.6" fill="#7f1d1d" /></g>)}
+          </g>
+        );
+      })()}
+      {stage === 'h72' && eyesT > 0.05 && [[34,192,'#c084fc'],[220,186,'#38bdf8']].map(([ex,ey,ec],i)=>(<g key={i} transform={`translate(${Number(ex)}, ${Number(ey)})`} opacity={eyesT * (0.6 + Math.sin(frame * 0.35 + i) * 0.35)}><circle cx="-4" cy="0" r="2" fill={String(ec)} /><circle cx="4" cy="0" r="2" fill={String(ec)} /></g>))}
+      {stage === 'd7' && (
+        <g>
+          <polyline points={`14,186 56,186 68,${164 + Math.sin(frame * 0.9) * 14} 80,204 92,178 112,186 154,186 168,${162 + Math.cos(frame * 1.1) * 14} 180,206 194,186 238,186`} fill="none" stroke="#ef4444" strokeWidth="2.4" opacity="0.88" />
+          <g transform={`translate(132, ${128 + Math.sin(frame * 0.4) * 2})`}>
+            <path d="M0,-14 L12,-9 L10,5 L0,14 L-10,5 L-12,-9 Z" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
+            <polyline points="-2,-10 3,-2 -3,3 2,11" fill="none" stroke="#ef4444" strokeWidth="2" />
+          </g>
         </g>
       )}
-      {stage === 'h72' && eyesT > 0.05 && [[38,194,'#c084fc'],[222,188,'#38bdf8']].map(([ex,ey,ec],i)=>(<g key={i} transform={`translate(${Number(ex)}, ${Number(ey)})`} opacity={eyesT * (0.6 + Math.sin(frame * 0.35 + i) * 0.35)}><circle cx="-4" cy="0" r="2" fill={String(ec)} /><circle cx="4" cy="0" r="2" fill={String(ec)} /></g>))}
-      {stage === 'd7' && (<g><polyline points={`18,176 58,176 70,${154 + Math.sin(frame * 0.9) * 14} 82,196 94,168 112,176 154,176 168,${152 + Math.cos(frame * 1.1) * 14} 180,198 194,176 236,176`} fill="none" stroke="#ef4444" strokeWidth="2.4" opacity="0.88" /><g transform={`translate(212, ${142 + Math.sin(frame * 0.4) * 2})`}><path d="M0,-14 L12,-9 L10,5 L0,14 L-10,5 L-12,-9 Z" fill="#1e293b" stroke="#facc15" strokeWidth="2" /><polyline points="-2,-10 3,-2 -3,3 2,11" fill="none" stroke="#ef4444" strokeWidth="2" /></g></g>)}
     </g>
   );
 };
@@ -146,13 +163,15 @@ export const NoSleep11Days: React.FC = () => {
   const activeIdx = WORD_SUBS_NS.findIndex((x) => sec >= x.s && sec < x.e);
   const activeWord = activeIdx >= 0 ? WORD_SUBS_NS[activeIdx] : null;
   const wordPop = activeWord ? spring({ frame: Math.max(0, frame - Math.floor(activeWord.s * fps)), fps, config: { damping: 11, stiffness: 280, mass: 0.5 } }) : 0;
-  const m1 = stage === 'h48' ? interpolate(localF, [22, 28, 42, 48], [0, 0.92, 0.92, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
-  const m2 = stage === 'h48' ? interpolate(localF, [78, 84, 98, 104], [0, 0.95, 0.95, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const d48 = Math.max(60, t72 - t48), b1 = Math.round(d48 * 0.42), b2 = Math.round(d48 * 0.7);
+  const m1 = stage === 'h48' ? interpolate(localF, [b1, b1 + 5, b1 + 16, b1 + 21], [0, 0.94, 0.94, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const m2 = stage === 'h48' ? interpolate(localF, [b2, b2 + 5, b2 + 20, b2 + 25], [0, 0.96, 0.96, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const microBlink = Math.max(m1, m2);
-  const shadowT = stage === 'h72' ? interpolate(localF, [28, 110], [0, 0.92], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const jolt = stage === 'h48' && ((localF >= b1 + 20 && localF <= b1 + 31) || (localF >= b2 + 24 && localF <= b2 + 35));
+  const shadowT = stage === 'h72' ? interpolate(localF, [24, 105], [0, 0.92], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const eyesT = stage === 'h72' ? interpolate(frame, [tShadow - 4, tShadow + 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
-  const fallT = stage === 'd11' ? interpolate(frame, [tShut - 4, tShut + 16], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
-  const lidH = stage === 'd11' ? interpolate(frame, [tShut + 6, tShut + 30], [0, 168], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const fallT = stage === 'd11' ? interpolate(frame, [tShut - 4, tShut + 14], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const lidH = stage === 'd11' ? interpolate(frame, [tBack - 18, tBack - 2], [0, 168], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const meta: Record<string, { dur: string; stat: string; big: string; sub: string; border: string; col: string }> = {
     start: { dur: '0 JAM', stat: 'OTAK: 100%', big: '0 JAM', sub: 'MULAI BEGADANG', border: '#38bdf8', col: '#38bdf8' },
     h24:   { dur: '24 JAM', stat: 'SETARA MABUK', big: '24 JAM', sub: 'FOKUS ANJLOK!', border: '#facc15', col: '#fde047' },
@@ -166,12 +185,12 @@ export const NoSleep11Days: React.FC = () => {
   const roomTilt = stage === 'd7' ? Math.sin(localF * 0.09) * 5.2 : 0;
   const shake = stage === 'h72' && eyesT > 0.2 ? Math.sin(frame * 2.2) * 1.8 : stage === 'd11' && fallT > 0 && fallT < 1 ? Math.sin(frame * 2.8) * 3.5 : 0;
   const udinMode: SleepMode = stage === 'start' ? 'fresh' : stage === 'h24' ? 'drunk' : stage === 'h48' ? 'micro' : stage === 'h72' ? 'panic' : stage === 'd7' ? 'dizzy' : stage === 'd11' ? 'shut' : 'morning';
-  const udinX = stage === 'd11' ? interpolate(fallT, [0, 1], [134, 80]) : stage === 'h72' ? 116 : 138;
-  const udinY = stage === 'd11' ? interpolate(fallT, [0, 1], [252, 224]) : 252;
+  const udinX = stage === 'd11' ? interpolate(fallT, [0, 1], [138, 76]) : stage === 'h72' ? 114 : 138;
+  const udinY = stage === 'd11' ? interpolate(fallT, [0, 1], [264, 218]) : 264;
   const introAlpha = stage === 'start' ? interpolate(frame, [0, 8, t24 - 14, t24 - 4], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const showChoices = stage === 'back' && !showCut && frame >= tChoice - 4;
   const choicePop = showChoices ? spring({ frame: Math.max(0, frame - (tChoice - 4)), fps, config: { damping: 11, stiffness: 210 } }) : 0;
-  const thudTimes = [t48 + 24, t48 + 80].filter((t) => t < t72 - 16);
+  const thudTimes = [t48 + b1 + 2, t48 + b2 + 2].filter((t) => t < t72 - 14);
   const heartTimes = [tDay7 + 6, tDay7 + 62].filter((t) => t < tDay11 - 20);
   const alarmTimes = [cutStart + 12, cutStart + 64].filter((t) => t < cutEnd - 24);
   return (
@@ -199,7 +218,8 @@ export const NoSleep11Days: React.FC = () => {
           </defs>
           <g transform={`rotate(${roomTilt}, 135, 190)`}>
             <RoomStageBg stage={stage} frame={frame} shadowT={shadowT} eyesT={eyesT} />
-            <UdinSleep2D x={udinX} y={udinY} mode={udinMode} frame={frame} nod={microBlink} fallT={fallT} />
+            <UdinSleep2D x={udinX} y={udinY} mode={udinMode} frame={frame} nod={microBlink} jolt={jolt} fallT={fallT} />
+            {stage === 'd11' && fallT > 0.85 && [0, 1].map((i) => { const p = ((frame + i * 16) % 36) / 36; return <text key={i} x={42 + p * 18} y={200 - p * 42} fill="#38bdf8" fontSize={8 + p * 6} fontWeight="bold" fontFamily="monospace" opacity={Math.sin(p * Math.PI)}>Z</text>; })}
           </g>
           {microBlink > 0.02 && <rect width="270" height="330" fill="#020617" opacity={microBlink} />}
           {lidH > 0.5 && (<><rect x="0" y="0" width="270" height={lidH} fill="#020617" /><rect x="0" y={330 - lidH} width="270" height={lidH} fill="#020617" />{lidH > 152 && <line x1="20" y1="165" x2="250" y2="165" stroke="#ffffff" strokeWidth="2" opacity={interpolate(lidH, [152, 168], [0.85, 0], { extrapolateRight: 'clamp' })} />}</>)}
@@ -212,10 +232,10 @@ export const NoSleep11Days: React.FC = () => {
           )}
           {showChoices && (
             <g>
-              <g transform={`translate(138, ${214 + Math.sin(frame * 0.24) * 3}) scale(${choicePop})`}><rect x="-10" y="-12" width="20" height="14" rx="4" fill="rgba(15,23,42,0.9)" stroke="#facc15" strokeWidth="1.4" /><text x="0" y="-2.5" textAnchor="middle" fill="#fde047" fontSize="9" fontWeight="bold" fontFamily="monospace">?</text></g>
-              <ChoiceBadge x={58} y={102 + Math.sin(frame * 0.22) * 3.5} label="24 JAM" col="#fde047" scale={choicePop} />
-              <ChoiceBadge x={135} y={102 + Math.sin(frame * 0.22 + 1.2) * 3.5} label="48 JAM" col="#fb923c" scale={choicePop} />
-              <ChoiceBadge x={212} y={102 + Math.sin(frame * 0.22 + 2.4) * 3.5} label="72 JAM+" col="#f87171" scale={choicePop} />
+              <g transform={`translate(138, ${208 + Math.sin(frame * 0.24) * 3}) scale(${choicePop})`}><rect x="-10" y="-12" width="20" height="14" rx="4" fill="rgba(15,23,42,0.9)" stroke="#facc15" strokeWidth="1.4" /><text x="0" y="-2.5" textAnchor="middle" fill="#fde047" fontSize="9" fontWeight="bold" fontFamily="monospace">?</text></g>
+              <ChoiceBadge x={58} y={66 + Math.sin(frame * 0.22) * 3.5} label="24 JAM" col="#fde047" scale={choicePop} />
+              <ChoiceBadge x={135} y={66 + Math.sin(frame * 0.22 + 1.2) * 3.5} label="48 JAM" col="#fb923c" scale={choicePop} />
+              <ChoiceBadge x={212} y={66 + Math.sin(frame * 0.22 + 2.4) * 3.5} label="72 JAM+" col="#f87171" scale={choicePop} />
             </g>
           )}
         </svg>
