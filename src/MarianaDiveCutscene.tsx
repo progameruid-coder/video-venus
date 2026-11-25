@@ -63,7 +63,7 @@ export const CloseUpUdinMariana: React.FC<{ frame: number; localFrame: number }>
           <path d="M-12,-28 L-10,-16 M8,-28 L10,-18" stroke="#bae6fd" strokeWidth="1.6" opacity="0.6" />
           <g transform="translate(-19, -20) rotate(22)"><Box3D x={-16} y={0} w={16} h={10} dx={4} dy={3} front="#dc2626" top="#ef4444" side="#991b1b" sw={1.6} /><Box3D x={-23} y={0} w={8} h={10} dx={3} dy={2.5} front="#fed7aa" top="#ffedd5" side="#fdba74" sw={1.6} /></g>
           <Box3D x={19} y={-22} w={18} h={10} dx={5} dy={4} front="#dc2626" top="#ef4444" side="#991b1b" sw={1.7} />
-          <g transform={`translate(42, ${-34 + bounce * 1.4}) rotate(${-12 + bounce * 4})`}>
+          <g transform={`translate(36, ${-32 + bounce * 1.4}) rotate(${-12 + bounce * 4})`}>
             <rect x="-4" y="6" width="28" height="4" fill="#0f172a" />
             <rect x="-2" y="0" width="13" height="14" rx="3" fill="#38bdf8" stroke="#0f172a" strokeWidth="1.8" />
             <rect x="13" y="0" width="13" height="14" rx="3" fill="#38bdf8" stroke="#0f172a" strokeWidth="1.8" />
@@ -101,20 +101,24 @@ export const CloseUpUdinMariana: React.FC<{ frame: number; localFrame: number }>
             {[-24, 2, 24].map((wx, i) => { const p = ((frame + i * 9) % 24) / 24; return <ellipse key={i} cx={wx} cy={-48 + p * 54} rx="2" ry="3.2" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.7" opacity={Math.sin(p * Math.PI)} />; })}
           </g>
         </g>
-        <g transform={`translate(${crabX}, 244)`}>
-          <ellipse cx="0" cy="6" rx="11" ry="3" fill="rgba(15,23,42,0.28)" />
-          <ellipse cx="0" cy="0" rx="10" ry="6.5" fill="#ef4444" stroke="#0f172a" strokeWidth="1.4" />
-          <circle cx="-4" cy="-6" r="2.2" fill="#ffffff" stroke="#0f172a" strokeWidth="1" /><circle cx="4" cy="-6" r="2.2" fill="#ffffff" stroke="#0f172a" strokeWidth="1" />
-          <circle cx="-4" cy="-6" r="1" fill="#0f172a" /><circle cx="4" cy="-6" r="1" fill="#0f172a" />
-          <g transform={`translate(-10, -2) rotate(${-20 + clawSnap})`}><circle cx="-4" cy="-3" r="4" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /></g>
-          <g transform={`translate(10, -2) rotate(${20 - clawSnap})`}><circle cx="4" cy="-3" r="4" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /></g>
-          <line x1="-8" y1="3" x2="-13" y2="6" stroke="#0f172a" strokeWidth="1.3" /><line x1="8" y1="3" x2="13" y2="6" stroke="#0f172a" strokeWidth="1.3" />
+        <g transform={`translate(${crabX}, ${244 + Math.abs(Math.sin(frame * 0.55)) * -1.4})`}>
+          <ellipse cx="0" cy="7" rx="13" ry="3.2" fill="rgba(15,23,42,0.28)" />
+          {[-1, 1].map((d) => [0, 1, 2].map((i) => {
+            const st = Math.sin(frame * 0.7 + i * 2.1 + (d > 0 ? 1 : 0)) * 2.2;
+            return <polyline key={`${d}-${i}`} points={`${d * (7 + i)},${1 + i * 1.4} ${d * (13 + i)},${-0.5 + i * 1.6 + st} ${d * (16 + i)},${4.5 + i * 1.2 + st}`} fill="none" stroke="#991b1b" strokeWidth="1.7" strokeLinecap="round" />;
+          }))}
+          <ellipse cx="0" cy="0" rx="10.5" ry="6.5" fill="#ef4444" stroke="#0f172a" strokeWidth="1.4" />
+          <line x1="-4" y1="-5" x2="-4.5" y2="-9" stroke="#0f172a" strokeWidth="1.5" /><line x1="4" y1="-5" x2="4.5" y2="-9" stroke="#0f172a" strokeWidth="1.5" />
+          <circle cx="-4.5" cy="-10" r="2.3" fill="#ffffff" stroke="#0f172a" strokeWidth="1" /><circle cx="4.5" cy="-10" r="2.3" fill="#ffffff" stroke="#0f172a" strokeWidth="1" />
+          <circle cx="-4.5" cy="-10" r="1.1" fill="#0f172a" /><circle cx="4.5" cy="-10" r="1.1" fill="#0f172a" />
+          <g transform={`translate(-9, -3) rotate(${-16 + clawSnap * 0.7})`}><path d="M0,0 C-5,-1 -8,-6 -4,-10 L-2,-5 L1,-9 C5,-6 4,-1 0,0 Z" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /></g>
+          <g transform={`translate(9, -3) rotate(${16 - clawSnap * 0.7})`}><path d="M0,0 C5,-1 8,-6 4,-10 L2,-5 L-1,-9 C-5,-6 -4,-1 0,0 Z" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /></g>
         </g>
       </svg>
       <div style={{ position: 'absolute', bottom: 22, left: 22, right: 22, backgroundColor: 'rgba(15, 23, 42, 0.94)', border: '4px solid #4ade80', borderRadius: 16, padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <div>
           <div style={{ fontFamily, fontSize: 19, color: '#4ade80', lineHeight: 1.3 }}>DARATAN PALING AMAN!</div>
-          <div style={{ fontFamily, fontSize: 13, color: '#fde047', marginTop: 9 }}>BASAH KUYUP + KACAMATA RETAK</div>
+          <div style={{ fontFamily, fontSize: 11, color: '#fde047', marginTop: 9 }}>BASAH KUYUP + KACAMATA RETAK</div>
         </div>
         <div style={{ fontFamily, fontSize: 18, color: '#f87171', padding: '8px 12px', borderRadius: 10, border: '2px solid #f87171', backgroundColor: 'rgba(239, 68, 68, 0.14)' }}>KAPOK!</div>
       </div>
