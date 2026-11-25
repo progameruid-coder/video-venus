@@ -18,7 +18,7 @@ jobs:
         run: npm ci
 
       - name: Render Video
-        run: npx remotion render src/index.ts MarianaDive out/venus-video.mp4
+        run: npx remotion render src/index.ts NoSleep11Days out/venus-video.mp4
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
