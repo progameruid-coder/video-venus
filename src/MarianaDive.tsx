@@ -15,11 +15,11 @@ const getWordColor = (w: string) => {
 };
 type DiveMode = 'boat' | 'dive' | 'swim' | 'tight' | 'scared' | 'crush' | 'beach';
 
-const UdinDive2D: React.FC<{ x: number; y: number; mode: DiveMode; frame: number; crushT?: number }> = ({ x, y, mode, frame, crushT = 0 }) => {
+const UdinDive2D: React.FC<{ x: number; y: number; mode: DiveMode; frame: number; crushT?: number; diveRot?: number }> = ({ x, y, mode, frame, crushT = 0, diveRot = 0 }) => {
   const isSwim = mode === 'swim' || mode === 'tight' || mode === 'scared';
   const isCrush = mode === 'crush', isBeach = mode === 'beach', isBoat = mode === 'boat', isDive = mode === 'dive';
   const sx = isCrush ? 1 + crushT * 0.56 : 1, sy = isCrush ? 1 - crushT * 0.58 : 1;
-  const rot = isDive ? 135 : isSwim ? Math.sin(frame * 0.16) * 7 : 0;
+  const rot = isDive ? diveRot : isSwim ? Math.sin(frame * 0.16) * 7 : 0;
   const shiv = mode === 'scared' ? Math.sin(frame * 1.9) * 1.5 : isCrush ? Math.sin(frame * 2.1) * 1.7 : mode === 'tight' ? Math.sin(frame * 1.2) * 0.8 : 0;
   const bob = isSwim ? Math.sin(frame * 0.22) * 3.2 : isBeach ? Math.sin(frame * 0.18) * 1.1 : 0;
   const kick = isSwim ? Math.sin(frame * 0.45) * 20 : 0;
@@ -35,7 +35,7 @@ const UdinDive2D: React.FC<{ x: number; y: number; mode: DiveMode; frame: number
       )}
       <rect x="-7" y="-8" width="14" height="13" fill="#dc2626" stroke="#0f172a" strokeWidth="1.4" />
       {mode === 'tight' ? (
-        <><polygon points="-7,-6 -11,-2 -2,0 -1,-4" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><polygon points="7,-6 11,-2 2,0 1,-4" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-3.5" y="-4" width="7" height="3.5" rx="1" fill={skin} stroke="#0f172a" strokeWidth="1" /></>
+        <><polygon points="-7,-6 -11,-2 -2,0 -1,-4" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><polygon points="7,-6 11,-2 2,0 1,-4" fill="#dc2626" stroke="#0f172a" strokeWidth="1.1" /><rect x="-3.5" y="-4" width="7" height="3.5" rx="1" fill={skin} stroke="#0f172a" strokeWidth="1" /><circle cx="0" cy="-2" r={4 + Math.sin(frame * 0.55) * 1.8} fill="none" stroke="#ef4444" strokeWidth="1.3" opacity="0.88" /></>
       ) : (
         <>
           <g transform={`translate(-7, -6) rotate(${isDive ? 165 : (mode === 'scared' || isCrush) ? 132 + Math.sin(frame * 0.7) * 18 : mode === 'swim' ? 32 + Math.sin(frame * 0.35) * 26 : isBeach ? 26 + Math.sin(frame * 0.2) * 8 : 8})`}><rect x="-2.5" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1.2" /><rect x="-2.5" y="7" width="4.5" height="3.5" fill={skin} stroke="#0f172a" strokeWidth="1" /></g>
@@ -77,10 +77,10 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
       <g>
         <rect width="270" height="205" fill="url(#mdSky)" />
         <circle cx="224" cy="40" r="20" fill="#fde047" opacity="0.28" /><circle cx="224" cy="40" r="13" fill="#fde047" stroke="#f59e0b" strokeWidth="2" />
-        <g transform={`translate(${((20 + frame * 0.2) % 310) - 45}, 62)`}><rect x="0" y="6" width="42" height="9" fill="#f0f9ff" /><rect x="8" y="0" width="24" height="8" fill="#ffffff" /></g>
+        <g transform={`translate(${((20 + frame * 0.2) % 310) - 45}, 76)`}><rect x="0" y="6" width="42" height="9" fill="#f0f9ff" /><rect x="8" y="0" width="24" height="8" fill="#ffffff" /></g>
         <rect y="200" width="270" height="130" fill="url(#md40)" />
         <path d={`M0,202 Q34,${195 + bw} 68,202 T136,202 T204,202 T270,202`} fill="none" stroke="#e0f2fe" strokeWidth="3.5" />
-        <g transform={`translate(135, ${198 + bw})`}><polygon points="-34,0 34,0 24,14 -24,14" fill="#ef4444" stroke="#0f172a" strokeWidth="1.8" /><rect x="-26" y="-5" width="52" height="5" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.4" /></g>
+        <g transform={`translate(135, ${198 + bw})`}><rect x="-28" y="-6" width="56" height="9" fill="#7f1d1d" stroke="#0f172a" strokeWidth="1.4" /><rect x="-26" y="-8" width="52" height="3.5" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1.2" /></g>
       </g>
     );
   }
@@ -108,30 +108,45 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
         <rect width="270" height="330" fill="url(#md332)" />
         {Array.from({ length: 14 }).map((_, i) => (<circle key={i} cx={(i * 23 + Math.sin(frame * 0.1 + i) * 6) % 270} cy={330 - ((frame * (3 + (i % 3)) + i * 38) % 340)} r={1.8 + (i % 3)} fill="none" stroke="#7dd3fc" strokeWidth="1" opacity="0.55" />))}
         <g opacity="0.78" fill="#fde047" stroke="#0f172a" strokeWidth="1">
-          <polygon points={`${58 + pPulse},192 ${72 + pPulse},202 ${58 + pPulse},212`} />
-          <polygon points={`${212 - pPulse},192 ${198 - pPulse},202 ${212 - pPulse},212`} />
+          <polygon points={`${72 + pPulse},192 ${86 + pPulse},202 ${72 + pPulse},212`} />
+          <polygon points={`${198 - pPulse},192 ${184 - pPulse},202 ${198 - pPulse},212`} />
         </g>
       </g>
     );
   }
   if (stage === 'z1000') {
-    const ax = interpolate(anglerT, [0, 1], [320, 198]);
+    const krakIn = interpolate(localF, [0, 30], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+    const ky = interpolate(krakIn, [0, 1], [248, 166]) + Math.sin(frame * 0.1) * 4;
+    const tw = Math.sin(frame * 0.14) * 10, tw2 = Math.cos(frame * 0.16) * 9;
     return (
       <g>
         <rect width="270" height="330" fill="url(#md1000)" />
         {Array.from({ length: 16 }).map((_, i) => (<circle key={i} cx={(i * 31 + frame * 0.6) % 270} cy={(i * 43 + frame * 1.4) % 330} r={i % 3 === 0 ? 2 : 1.2} fill="#38bdf8" opacity={0.25 + ((frame + i * 7) % 12) / 20} />))}
-        {anglerT > 0.02 && (
-          <g transform={`translate(${ax}, ${202 + Math.sin(frame * 0.25) * 5})`}>
-            <path d="M-10,-22 Q-28,-42 -42,-18" fill="none" stroke="#94a3b8" strokeWidth="2.2" />
-            <circle cx="-42" cy="-18" r="11" fill="#fde047" opacity={0.28 + Math.sin(frame * 0.5) * 0.12} />
-            <circle cx="-42" cy="-18" r="4.5" fill="#fef08a" stroke="#f59e0b" strokeWidth="1.2" />
-            <ellipse cx="0" cy="0" rx="34" ry="24" fill="#312e81" stroke="#0f172a" strokeWidth="2" />
-            <polygon points="30,0 48,-16 48,16" fill="#312e81" stroke="#0f172a" strokeWidth="1.8" />
-            <path d="M-32,2 L-10,2 L-16,14 L-30,12 Z" fill="#450a0a" stroke="#0f172a" strokeWidth="1.4" />
-            <polygon points="-28,2 -25,8 -22,2 -19,9 -16,2 -13,8 -10,2" fill="#ffffff" />
-            <circle cx="-16" cy="-7" r="4" fill="#ef4444" stroke="#0f172a" strokeWidth="1.2" /><circle cx="-17" cy="-7" r="1.5" fill="#fef08a" />
+        <g transform={`translate(135, ${ky})`} opacity={krakIn * 0.96}>
+          <path d={`M-32,12 Q${-88 + tw},22 ${-108 + tw2},-26 Q${-112 + tw},-48 ${-94 + tw2},-42 Q${-84 + tw},4 -28,32 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.8" />
+          <path d={`M32,12 Q${86 - tw},20 ${100 - tw2},-24 Q${104 - tw},-46 ${88 - tw2},-40 Q${78 - tw},4 28,32 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.8" />
+          <path d={`M-26,30 Q${-78 - tw2},64 ${-96 + tw},116 Q${-66 - tw},78 -16,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.6" />
+          <path d={`M26,30 Q${76 + tw2},64 ${92 - tw},116 Q${62 + tw},78 16,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.6" />
+          <path d={`M-14,36 Q${-36 + tw},92 ${-44 - tw2},142 Q${-16 + tw},98 -4,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.5" />
+          <path d={`M14,36 Q${36 - tw},92 ${44 + tw2},142 Q${16 - tw},98 4,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.5" />
+          <path d="M-46,24 C-56,-34 -34,-76 0,-80 C34,-76 56,-34 46,24 Q0,44 -46,24 Z" fill="#030712" stroke="#312e81" strokeWidth="2.2" />
+          <path d="M-36,16 C-42,-28 -24,-62 0,-66 C24,-62 42,-28 36,16" fill="none" stroke="#4c1d95" strokeWidth="2" opacity="0.48" />
+          {anglerT > 0.02 && (
+            <g opacity={anglerT}>
+              <circle cx="-18" cy="-8" r={11 + Math.sin(frame * 0.45) * 2} fill="#ef4444" opacity="0.34" />
+              <circle cx="18" cy="-8" r={11 + Math.sin(frame * 0.45) * 2} fill="#ef4444" opacity="0.34" />
+              <polygon points="-28,-13 -10,-6 -24,-2" fill="#fde047" stroke="#ef4444" strokeWidth="1.2" />
+              <polygon points="28,-13 10,-6 24,-2" fill="#fde047" stroke="#ef4444" strokeWidth="1.2" />
+              <circle cx="-18" cy="-7" r="2.2" fill="#7f1d1d" /><circle cx="18" cy="-7" r="2.2" fill="#7f1d1d" />
+            </g>
+          )}
+        </g>
+        {anglerT > 0.05 && [[34,158,'#38bdf8'],[212,174,'#4ade80'],[44,274,'#fde047']].map(([ex,ey,ec],i)=>(
+          <g key={i} transform={`translate(${Number(ex)}, ${Number(ey) + Math.sin(frame * 0.2 + i) * 3})`} opacity={anglerT * (0.65 + Math.sin(frame * 0.35 + i * 2) * 0.35)}>
+            <circle cx="-5" cy="0" r="4.5" fill={String(ec)} opacity="0.32" /><circle cx="5" cy="0" r="4.5" fill={String(ec)} opacity="0.32" />
+            <circle cx="-5" cy="0" r="2" fill={String(ec)} /><circle cx="5" cy="0" r="2" fill={String(ec)} />
           </g>
-        )}
+        ))}
       </g>
     );
   }
@@ -140,8 +155,9 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
     return (
       <g>
         <rect width="270" height="330" fill="url(#md3800)" />
-        <circle cx="135" cy="202" r={18 + sp * 115} fill="none" stroke="#4ade80" strokeWidth="2.2" opacity={(1 - sp) * 0.72} />
-        <circle cx="135" cy="202" r={8 + sp * 78} fill="none" stroke="#4ade80" strokeWidth="1.2" opacity={(1 - sp) * 0.45} />
+        <polygon points={`135,0 ${135 + Math.sin(frame * 0.09) * 85 - 42},330 ${135 + Math.sin(frame * 0.09) * 85 + 42},330`} fill="#4ade80" opacity="0.11" />
+        <circle cx="135" cy="10" r={22 + sp * 295} fill="none" stroke="#4ade80" strokeWidth="2.4" opacity={(1 - sp) * 0.7} />
+        <circle cx="135" cy="10" r={10 + sp * 225} fill="none" stroke="#4ade80" strokeWidth="1.3" opacity={(1 - sp) * 0.42} />
         <rect y="286" width="270" height="44" fill="#0f172a" />
         <g transform="translate(18, 246)" opacity="0.92">
           <polygon points="0,42 18,12 186,16 196,42" fill="#1e293b" stroke="#020617" strokeWidth="1.8" />
@@ -156,23 +172,23 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
     );
   }
   if (stage === 'z11k') {
-    const pressIn = interpolate(localF, [8, 16], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-    const pressY = interpolate(pressIn, [0, 1], [118, 164]) + crushT * 34 + Math.sin(frame * 0.9) * 1.4;
-    const sideX = interpolate(pressIn, [0, 1], [32, 66]) + crushT * 24;
+    const pressIn = interpolate(localF, [6, 16], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+    const pul = Math.sin(frame * 0.75) * 4.5;
+    const topY = interpolate(pressIn, [0, 1], [116, 162]) + crushT * 24 + pul;
+    const sideX = interpolate(pressIn, [0, 1], [38, 72]) + crushT * 16 + pul;
     return (
       <g>
         <rect width="270" height="330" fill="url(#md11k)" />
         <polygon points="0,0 56,0 44,96 66,188 48,274 72,330 0,330" fill="#0f172a" stroke="#1e293b" strokeWidth="2" />
         <polygon points="270,0 214,0 226,96 204,188 222,274 198,330 270,330" fill="#0f172a" stroke="#1e293b" strokeWidth="2" />
         <rect y="286" width="270" height="44" fill="#020617" />
-        <g opacity={pressIn * (0.84 + Math.sin(frame * 0.6) * 0.14)}>
-          <rect x="88" y={pressY} width="94" height="5" fill="#ef4444" stroke="#0f172a" strokeWidth="1.2" />
-          {[104, 135, 166].map((px, i) => (<polygon key={i} points={`${px - 6},${pressY + 6} ${px + 6},${pressY + 6} ${px},${pressY + 15}`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />))}
-          <rect x={sideX} y="192" width="5" height="46" fill="#ef4444" stroke="#0f172a" strokeWidth="1.2" />
-          <polygon points={`${sideX + 6},208 ${sideX + 6},222 ${sideX + 16},215`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
-          <rect x={265 - sideX} y="192" width="5" height="46" fill="#ef4444" stroke="#0f172a" strokeWidth="1.2" />
-          <polygon points={`${264 - sideX},208 ${264 - sideX},222 ${254 - sideX},215`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
+        <g opacity={pressIn * (0.78 + Math.sin(frame * 0.65) * 0.2)}>
+          {[104, 135, 166].map((px, i) => (<g key={i}><rect x={px - 2.5} y={topY - 12} width="5" height="12" fill="#ef4444" stroke="#0f172a" strokeWidth="1" /><polygon points={`${px - 7},${topY} ${px + 7},${topY} ${px},${topY + 11}`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" /></g>))}
+          <rect x={sideX - 12} y="213" width="12" height="5" fill="#ef4444" stroke="#0f172a" strokeWidth="1" /><polygon points={`${sideX},208 ${sideX},223 ${sideX + 11},215.5`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
+          <rect x={270 - sideX} y="213" width="12" height="5" fill="#ef4444" stroke="#0f172a" strokeWidth="1" /><polygon points={`${270 - sideX},208 ${270 - sideX},223 ${259 - sideX},215.5`} fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
         </g>
+        <rect x="0" y="0" width="270" height="330" fill="none" stroke="#dc2626" strokeWidth="14" opacity={0.22 + crushT * 0.35 + Math.sin(frame * 0.5) * 0.12} />
+        {crushT > 0.5 && (<g stroke="#fca5a5" strokeWidth="1.5" fill="none" opacity={(crushT - 0.5) * 1.4}><polyline points="0,42 22,52 14,72 34,82" /><polyline points="270,58 248,68 256,88 238,98" /><polyline points="0,286 24,274 36,290" /><polyline points="270,278 246,268 236,284" /></g>)}
       </g>
     );
   }
@@ -180,12 +196,23 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
     <g>
       <rect width="270" height="175" fill="url(#mdSky)" />
       <circle cx="224" cy="40" r="20" fill="#fde047" opacity="0.28" /><circle cx="224" cy="40" r="13" fill="#fde047" stroke="#f59e0b" strokeWidth="2" />
-      <g transform={`translate(${((16 + frame * 0.18) % 310) - 45}, 56)`}><rect x="0" y="6" width="42" height="9" fill="#f0f9ff" /><rect x="8" y="0" width="24" height="8" fill="#ffffff" /></g>
+      <g transform={`translate(${((16 + frame * 0.18) % 310) - 45}, 74)`}><rect x="0" y="6" width="42" height="9" fill="#f0f9ff" /><rect x="8" y="0" width="24" height="8" fill="#ffffff" /></g>
       <rect y="162" width="270" height="52" fill="#0284c7" />
       <path d={`M0,206 Q68,${198 + Math.sin(frame * 0.15) * 3} 135,204 T270,202 L270,330 L0,330 Z`} fill="#e0f2fe" opacity="0.82" />
       <path d="M0,214 Q70,204 140,212 T270,210 L270,330 L0,330 Z" fill="#fde68a" />
       <g transform="translate(14, 126)"><path d="M8,108 Q16,66 20,26 L28,28 Q22,68 18,108 Z" fill="#92400e" stroke="#0f172a" strokeWidth="1.4" /><path d="M24,28 Q4,14 -6,24 Q6,26 20,34 Z" fill="#16a34a" stroke="#0f172a" strokeWidth="1.3" /><path d="M24,26 Q42,8 56,20 Q42,24 28,32 Z" fill="#22c55e" stroke="#0f172a" strokeWidth="1.3" /></g>
-      <g transform={`translate(${218 + Math.sin(frame * 0.16) * 8}, 268)`}><ellipse cx="0" cy="0" rx="7" ry="4.5" fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" /><circle cx="-3" cy="-4" r="1.4" fill="#ffffff" /><circle cx="3" cy="-4" r="1.4" fill="#ffffff" /></g>
+      <g transform={`translate(${210 + Math.sin(frame * 0.14) * 14}, ${268 + Math.abs(Math.sin(frame * 0.55)) * -1.2})`}>
+        <ellipse cx="0" cy="5" rx="9" ry="2.2" fill="rgba(15,23,42,0.28)" />
+        {[-1, 1].map((d) => [0, 1, 2].map((i) => {
+          const st = Math.sin(frame * 0.75 + i * 2 + (d > 0 ? 1 : 0)) * 1.6;
+          return <polyline key={`${d}-${i}`} points={`${d * (5 + i)},${1 + i} ${d * (9 + i)},${i + st} ${d * (11.5 + i)},${3.5 + i + st}`} fill="none" stroke="#991b1b" strokeWidth="1.2" strokeLinecap="round" />;
+        }))}
+        <ellipse cx="0" cy="0" rx="7.5" ry="4.6" fill="#ef4444" stroke="#0f172a" strokeWidth="1.1" />
+        <circle cx="-3" cy="-6" r="1.7" fill="#ffffff" stroke="#0f172a" strokeWidth="0.8" /><circle cx="3" cy="-6" r="1.7" fill="#ffffff" stroke="#0f172a" strokeWidth="0.8" />
+        <circle cx="-3" cy="-6" r="0.8" fill="#0f172a" /><circle cx="3" cy="-6" r="0.8" fill="#0f172a" />
+        <g transform={`translate(-6.5, -2) rotate(${-15 + Math.sin(frame * 0.6) * 14})`}><path d="M0,0 C-4,-1 -6,-5 -3,-7.5 L-1,-4 L1,-7 C4,-5 3,-1 0,0 Z" fill="#dc2626" stroke="#0f172a" strokeWidth="0.9" /></g>
+        <g transform={`translate(6.5, -2) rotate(${15 - Math.sin(frame * 0.6) * 14})`}><path d="M0,0 C4,-1 6,-5 3,-7.5 L1,-4 L-1,-7 C-4,-5 -3,-1 0,0 Z" fill="#dc2626" stroke="#0f172a" strokeWidth="0.9" /></g>
+      </g>
     </g>
   );
 };
@@ -219,10 +246,14 @@ export const MarianaDive: React.FC = () => {
   const shake = stage === 'z11k' ? Math.sin(frame * 2.6) * 3.8 : 0;
   const crushT = stage === 'z11k' ? interpolate(localF, [12, 95], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const anglerT = stage === 'z1000' ? interpolate(frame, [tAngler - 4, tAngler + 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const boatBob = stage === 'surface' ? Math.sin(frame * 0.16) * 2.5 : 0;
   const isDiving = stage === 'surface' && frame >= t40 - 12;
+  const diveT = isDiving ? interpolate(frame, [t40 - 12, t40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const udinX = isDiving ? 135 + diveT * 52 : 135;
+  const diveRot = diveT * 135;
   const udinMode: DiveMode = isDiving ? 'dive' : stage === 'surface' ? 'boat' : stage === 'z40' ? 'swim' : stage === 'z332' ? 'tight' : stage === 'z1000' || stage === 'z3800' ? 'scared' : stage === 'z11k' ? 'crush' : 'beach';
-  const udinY = stage === 'surface' ? (isDiving ? interpolate(frame, [t40 - 12, t40 - 6, t40], [184, 158, 224], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 184) : stage === 'z11k' ? 218 : stage === 'back' ? 248 : 204;
-  const isSplash = frame >= t40 - 2 && frame <= t40 + 9;
+  const udinY = stage === 'surface' ? (isDiving ? 186 + boatBob - Math.sin(diveT * Math.PI) * 38 + diveT * 26 : 186 + boatBob) : stage === 'z11k' ? 218 : stage === 'back' ? 248 : 204;
+  const isSplash = stage === 'surface' && frame >= t40 - 4;
   const introAlpha = stage === 'surface' ? interpolate(frame, [0, 8, t40 - 14, t40 - 4], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const showChoices = stage === 'back' && !showCut && frame >= tChoice - 6;
   const choicePop = showChoices ? spring({ frame: Math.max(0, frame - (tChoice - 6)), fps, config: { damping: 11, stiffness: 210 } }) : 0;
@@ -255,12 +286,10 @@ export const MarianaDive: React.FC = () => {
             <linearGradient id="md11k" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#020617" /><stop offset="100%" stopColor="#000000" /></linearGradient>
           </defs>
           <MarianaStageBg stage={stage} frame={frame} localF={localF} anglerT={anglerT} crushT={crushT} />
-          <UdinDive2D x={135} y={udinY} mode={udinMode} frame={frame} crushT={crushT} />
-          {isSplash && (
-            <g opacity={interpolate(frame, [t40 - 2, t40 + 9], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}>
-              {[-24, -12, 0, 12, 24].map((sx, i) => (<circle key={i} cx={135 + sx} cy={196 - Math.abs(sx) * 0.4 - (frame - t40) * 2.5} r={3.5 - (i % 2)} fill="#e0f2fe" />))}
-            </g>
-          )}
+          <UdinDive2D x={udinX} y={udinY} mode={udinMode} frame={frame} crushT={crushT} diveRot={diveRot} />
+          {stage === 'surface' && (<g transform={`translate(135, ${198 + boatBob})`}><polygon points="-34,0 34,0 24,14 -24,14" fill="#ef4444" stroke="#0f172a" strokeWidth="1.8" /><rect x="-28" y="-3" width="56" height="4.5" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.3" /><path d="M-36,12 Q-18,9 0,12 T36,12" fill="none" stroke="#bae6fd" strokeWidth="2.2" opacity="0.85" /></g>)}
+          {isSplash && (<g opacity={interpolate(frame, [t40 - 4, t40], [1, 0.3], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}>{[-18, -9, 0, 9, 18].map((sx, i) => (<circle key={i} cx={187 + sx} cy={198 - (frame - (t40 - 4)) * 5 - (i % 2) * 4} r={3.6 - (i % 2)} fill="#e0f2fe" />))}</g>)}
+          {stage === 'z40' && localF < 12 && (<g opacity={1 - localF / 12}>{[-22, -10, 4, 16, 26].map((bx, i) => (<circle key={i} cx={135 + bx} cy={180 - localF * 5 - (i % 3) * 8} r={2.2 + (i % 2) * 1.4} fill="none" stroke="#e0f2fe" strokeWidth="1.2" />))}</g>)}
           {stage !== 'back' && (
             <g transform="translate(250, 102)">
               <rect x="0" y="0" width="9" height="164" rx="4.5" fill="rgba(15,23,42,0.78)" stroke="#94a3b8" strokeWidth="1.2" />
