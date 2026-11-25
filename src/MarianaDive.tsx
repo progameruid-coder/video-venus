@@ -115,32 +115,40 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
     );
   }
   if (stage === 'z1000') {
-    const krakIn = interpolate(localF, [0, 30], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-    const ky = interpolate(krakIn, [0, 1], [248, 166]) + Math.sin(frame * 0.1) * 4;
-    const tw = Math.sin(frame * 0.14) * 10, tw2 = Math.cos(frame * 0.16) * 9;
+    const krakAlpha = interpolate(localF, [36, 132], [0, 0.9], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+    const krakScale = interpolate(localF, [36, 150], [0.88, 1.06], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+    const tw = Math.sin(frame * 0.08) * 9, tw2 = Math.cos(frame * 0.09) * 8;
+    const krakBody = (
+      <>
+        <path d={`M-30,14 Q${-86 + tw},24 ${-104 + tw2},-24 Q${-108 + tw},-46 ${-90 + tw2},-40 Q${-80 + tw},6 -26,34 Z`} />
+        <path d={`M30,14 Q${84 - tw},22 ${98 - tw2},-22 Q${102 - tw},-44 ${86 - tw2},-38 Q${76 - tw},6 26,34 Z`} />
+        <path d={`M-24,30 Q${-76 - tw2},64 ${-94 + tw},116 Q${-64 - tw},78 -14,44 Z`} />
+        <path d={`M24,30 Q${74 + tw2},64 ${90 - tw},116 Q${60 + tw},78 14,44 Z`} />
+        <path d={`M-14,36 Q${-34 + tw},92 ${-42 - tw2},140 Q${-14 + tw},98 -4,44 Z`} />
+        <path d={`M14,36 Q${34 - tw},92 ${42 + tw2},140 Q${14 - tw},98 4,44 Z`} />
+        <path d="M-46,24 C-56,-34 -34,-76 0,-80 C34,-76 56,-34 46,24 Q0,44 -46,24 Z" />
+      </>
+    );
     return (
       <g>
         <rect width="270" height="330" fill="url(#md1000)" />
+        <ellipse cx="135" cy="186" rx="112" ry="126" fill="#1e3a5f" opacity="0.24" />
         {Array.from({ length: 16 }).map((_, i) => (<circle key={i} cx={(i * 31 + frame * 0.6) % 270} cy={(i * 43 + frame * 1.4) % 330} r={i % 3 === 0 ? 2 : 1.2} fill="#38bdf8" opacity={0.25 + ((frame + i * 7) % 12) / 20} />))}
-        <g transform={`translate(135, ${ky})`} opacity={krakIn * 0.96}>
-          <path d={`M-32,12 Q${-88 + tw},22 ${-108 + tw2},-26 Q${-112 + tw},-48 ${-94 + tw2},-42 Q${-84 + tw},4 -28,32 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.8" />
-          <path d={`M32,12 Q${86 - tw},20 ${100 - tw2},-24 Q${104 - tw},-46 ${88 - tw2},-40 Q${78 - tw},4 28,32 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.8" />
-          <path d={`M-26,30 Q${-78 - tw2},64 ${-96 + tw},116 Q${-66 - tw},78 -16,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.6" />
-          <path d={`M26,30 Q${76 + tw2},64 ${92 - tw},116 Q${62 + tw},78 16,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.6" />
-          <path d={`M-14,36 Q${-36 + tw},92 ${-44 - tw2},142 Q${-16 + tw},98 -4,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.5" />
-          <path d={`M14,36 Q${36 - tw},92 ${44 + tw2},142 Q${16 - tw},98 4,44 Z`} fill="#030712" stroke="#312e81" strokeWidth="1.5" />
-          <path d="M-46,24 C-56,-34 -34,-76 0,-80 C34,-76 56,-34 46,24 Q0,44 -46,24 Z" fill="#030712" stroke="#312e81" strokeWidth="2.2" />
-          <path d="M-36,16 C-42,-28 -24,-62 0,-66 C24,-62 42,-28 36,16" fill="none" stroke="#4c1d95" strokeWidth="2" opacity="0.48" />
-          {anglerT > 0.02 && (
-            <g opacity={anglerT}>
-              <circle cx="-18" cy="-8" r={11 + Math.sin(frame * 0.45) * 2} fill="#ef4444" opacity="0.34" />
-              <circle cx="18" cy="-8" r={11 + Math.sin(frame * 0.45) * 2} fill="#ef4444" opacity="0.34" />
-              <polygon points="-28,-13 -10,-6 -24,-2" fill="#fde047" stroke="#ef4444" strokeWidth="1.2" />
-              <polygon points="28,-13 10,-6 24,-2" fill="#fde047" stroke="#ef4444" strokeWidth="1.2" />
-              <circle cx="-18" cy="-7" r="2.2" fill="#7f1d1d" /><circle cx="18" cy="-7" r="2.2" fill="#7f1d1d" />
-            </g>
-          )}
-        </g>
+        {krakAlpha > 0.01 && (
+          <g transform={`translate(135, ${172 + Math.sin(frame * 0.08) * 3}) scale(${krakScale})`} opacity={krakAlpha}>
+            <g transform="scale(1.06)" fill="#020617" opacity="0.4">{krakBody}</g>
+            <g fill="#010409">{krakBody}</g>
+            {anglerT > 0.02 && (
+              <g opacity={anglerT}>
+                <circle cx="-18" cy="-8" r={10 + Math.sin(frame * 0.45) * 2} fill="#ef4444" opacity="0.34" />
+                <circle cx="18" cy="-8" r={10 + Math.sin(frame * 0.45) * 2} fill="#ef4444" opacity="0.34" />
+                <polygon points="-27,-12 -10,-6 -23,-2" fill="#fde047" stroke="#ef4444" strokeWidth="1" />
+                <polygon points="27,-12 10,-6 23,-2" fill="#fde047" stroke="#ef4444" strokeWidth="1" />
+                <circle cx="-18" cy="-7" r="2" fill="#7f1d1d" /><circle cx="18" cy="-7" r="2" fill="#7f1d1d" />
+              </g>
+            )}
+          </g>
+        )}
         {anglerT > 0.05 && [[34,158,'#38bdf8'],[212,174,'#4ade80'],[44,274,'#fde047']].map(([ex,ey,ec],i)=>(
           <g key={i} transform={`translate(${Number(ex)}, ${Number(ey) + Math.sin(frame * 0.2 + i) * 3})`} opacity={anglerT * (0.65 + Math.sin(frame * 0.35 + i * 2) * 0.35)}>
             <circle cx="-5" cy="0" r="4.5" fill={String(ec)} opacity="0.32" /><circle cx="5" cy="0" r="4.5" fill={String(ec)} opacity="0.32" />
@@ -197,10 +205,38 @@ const MarianaStageBg: React.FC<{ stage: string; frame: number; localF: number; a
       <rect width="270" height="175" fill="url(#mdSky)" />
       <circle cx="224" cy="40" r="20" fill="#fde047" opacity="0.28" /><circle cx="224" cy="40" r="13" fill="#fde047" stroke="#f59e0b" strokeWidth="2" />
       <g transform={`translate(${((16 + frame * 0.18) % 310) - 45}, 74)`}><rect x="0" y="6" width="42" height="9" fill="#f0f9ff" /><rect x="8" y="0" width="24" height="8" fill="#ffffff" /></g>
+      {[0, 1].map((bi) => { const w = Math.sin(frame * 0.4 + bi * 2) > 0 ? -2.2 : 1.4; return <polyline key={bi} transform={`translate(${((frame * 0.9 + bi * 34) % 300) - 15}, ${44 + bi * 11})`} points={`-4,${w} 0,0 4,${w}`} fill="none" stroke="#0f172a" strokeWidth="1.2" />; })}
       <rect y="162" width="270" height="52" fill="#0284c7" />
       <path d={`M0,206 Q68,${198 + Math.sin(frame * 0.15) * 3} 135,204 T270,202 L270,330 L0,330 Z`} fill="#e0f2fe" opacity="0.82" />
       <path d="M0,214 Q70,204 140,212 T270,210 L270,330 L0,330 Z" fill="#fde68a" />
+      <ellipse cx="242" cy="212" rx="14" ry="6" fill="#64748b" stroke="#0f172a" strokeWidth="1.2" /><ellipse cx="252" cy="215" rx="8" ry="4" fill="#94a3b8" stroke="#0f172a" strokeWidth="1" />
       <g transform="translate(14, 126)"><path d="M8,108 Q16,66 20,26 L28,28 Q22,68 18,108 Z" fill="#92400e" stroke="#0f172a" strokeWidth="1.4" /><path d="M24,28 Q4,14 -6,24 Q6,26 20,34 Z" fill="#16a34a" stroke="#0f172a" strokeWidth="1.3" /><path d="M24,26 Q42,8 56,20 Q42,24 28,32 Z" fill="#22c55e" stroke="#0f172a" strokeWidth="1.3" /></g>
+      <polygon points="44,246 86,246 92,258 38,258" fill="#38bdf8" stroke="#0f172a" strokeWidth="1.1" />
+      <rect x="46" y="249" width="38" height="2.2" fill="#e0f2fe" />
+      <g transform="translate(68, 214)">
+        <line x1="0" y1="0" x2="0" y2="34" stroke="#78350f" strokeWidth="2.2" />
+        <path d="M-24,2 Q0,-18 24,2 Z" fill="#ef4444" stroke="#0f172a" strokeWidth="1.3" />
+        <path d="M-8,2 Q0,-16 8,2 Z" fill="#ffffff" stroke="#0f172a" strokeWidth="1" />
+      </g>
+      <g transform="translate(64, 286)">
+        <ellipse cx="0" cy="8" rx="8" ry="2.2" fill="rgba(15,23,42,0.22)" />
+        <circle cx="0" cy="0" r="8.5" fill="#ffffff" stroke="#0f172a" strokeWidth="1.2" />
+        <path d="M0,-8.5 A8.5,8.5 0 0,1 8.5,0 L0,0 Z" fill="#ef4444" />
+        <path d="M0,8.5 A8.5,8.5 0 0,1 -8.5,0 L0,0 Z" fill="#38bdf8" />
+        <circle cx="0" cy="0" r="2" fill="#fde047" stroke="#0f172a" strokeWidth="0.9" />
+      </g>
+      <g transform="translate(194, 304)">
+        <rect x="-14" y="-10" width="28" height="12" fill="#f59e0b" stroke="#0f172a" strokeWidth="1.2" />
+        <rect x="-14" y="-14" width="6" height="4" fill="#fbbf24" stroke="#0f172a" strokeWidth="1" />
+        <rect x="-3" y="-16" width="6" height="6" fill="#fbbf24" stroke="#0f172a" strokeWidth="1" />
+        <rect x="8" y="-14" width="6" height="4" fill="#fbbf24" stroke="#0f172a" strokeWidth="1" />
+        <rect x="-2.5" y="-5" width="5" height="7" rx="2" fill="#78350f" />
+        <line x1="0" y1="-16" x2="0" y2="-23" stroke="#0f172a" strokeWidth="1" /><polygon points="0,-23 7,-20.5 0,-18" fill="#ef4444" />
+      </g>
+      <polygon points="104,288 106,292 110,292 107,295 108,299 104,296 100,299 101,295 98,292 102,292" fill="#fb923c" stroke="#0f172a" strokeWidth="0.9" />
+      <path d="M152,286 Q158,279 164,286 L158,290 Z" fill="#f9a8d4" stroke="#0f172a" strokeWidth="0.9" />
+      <path d="M24,296 Q30,290 36,296 L30,300 Z" fill="#fef08a" stroke="#0f172a" strokeWidth="0.9" />
+      {[[22,262],[98,272],[168,256],[238,286],[132,306],[46,310]].map(([sx,sy],i)=>(<circle key={i} cx={sx} cy={sy} r="1.3" fill="#d97706" opacity="0.45" />))}
       <g transform={`translate(${210 + Math.sin(frame * 0.14) * 14}, ${268 + Math.abs(Math.sin(frame * 0.55)) * -1.2})`}>
         <ellipse cx="0" cy="5" rx="9" ry="2.2" fill="rgba(15,23,42,0.28)" />
         {[-1, 1].map((d) => [0, 1, 2].map((i) => {
@@ -244,17 +280,18 @@ export const MarianaDive: React.FC = () => {
   };
   const cur = meta[stage];
   const shake = stage === 'z11k' ? Math.sin(frame * 2.6) * 3.8 : 0;
-  const crushT = stage === 'z11k' ? interpolate(localF, [12, 95], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const crushT = stage === 'z11k' ? interpolate(localF, [18, 175], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const anglerT = stage === 'z1000' ? interpolate(frame, [tAngler - 4, tAngler + 18], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const boatBob = stage === 'surface' ? Math.sin(frame * 0.16) * 2.5 : 0;
-  const isDiving = stage === 'surface' && frame >= t40 - 12;
-  const diveT = isDiving ? interpolate(frame, [t40 - 12, t40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const isDiving = stage === 'surface' && frame >= t40 - 18;
+  const diveT = isDiving ? interpolate(frame, [t40 - 18, t40 - 5], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const udinX = isDiving ? 135 + diveT * 52 : 135;
   const diveRot = diveT * 135;
   const udinMode: DiveMode = isDiving ? 'dive' : stage === 'surface' ? 'boat' : stage === 'z40' ? 'swim' : stage === 'z332' ? 'tight' : stage === 'z1000' || stage === 'z3800' ? 'scared' : stage === 'z11k' ? 'crush' : 'beach';
-  const udinY = stage === 'surface' ? (isDiving ? 186 + boatBob - Math.sin(diveT * Math.PI) * 38 + diveT * 26 : 186 + boatBob) : stage === 'z11k' ? 218 : stage === 'back' ? 248 : 204;
-  const isSplash = stage === 'surface' && frame >= t40 - 4;
-  const introAlpha = stage === 'surface' ? interpolate(frame, [0, 8, t40 - 14, t40 - 4], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
+  const udinY = stage === 'surface' ? (isDiving ? 186 + boatBob - Math.sin(diveT * Math.PI) * 34 + diveT * 36 : 186 + boatBob) : stage === 'z11k' ? 218 : stage === 'back' ? 248 : 204;
+  const isSplash = stage === 'surface' && frame >= t40 - 6;
+  const hideUdin = stage === 'surface' && frame >= t40 - 5;
+  const introAlpha = stage === 'surface' ? interpolate(frame, [0, 8, t40 - 22, t40 - 14], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const showChoices = stage === 'back' && !showCut && frame >= tChoice - 6;
   const choicePop = showChoices ? spring({ frame: Math.max(0, frame - (tChoice - 6)), fps, config: { damping: 11, stiffness: 210 } }) : 0;
   const sonarTimes = [t3800 + 8, t3800 + 78].filter((t) => t < t11k - 24);
@@ -262,7 +299,7 @@ export const MarianaDive: React.FC = () => {
     <AbsoluteFill style={{ backgroundColor: '#0f172a', overflow: 'hidden', transform: `translate(${shake}px, ${-shake * 0.5}px)` }}>
       <Audio src={staticFile('vo_mariana_dive.mp3')} volume={1} />
       <Audio src={staticFile('bgm_mariana_dive.wav')} volume={0.21} />
-      <Sequence from={Math.max(0, t40 - 4)} durationInFrames={22}><Audio src={staticFile('sfx_md_splash.wav')} volume={0.36} /></Sequence>
+      <Sequence from={Math.max(0, t40 - 6)} durationInFrames={22}><Audio src={staticFile('sfx_md_splash.wav')} volume={0.36} /></Sequence>
       <Sequence from={t40 + 14} durationInFrames={25}><Audio src={staticFile('sfx_md_bubble.wav')} volume={0.28} /></Sequence>
       <Sequence from={t332 + 4} durationInFrames={25}><Audio src={staticFile('sfx_md_bubble.wav')} volume={0.30} /></Sequence>
       <Sequence from={t1000} durationInFrames={Math.max(1, Math.min(176, t3800 - t1000))}><Audio src={staticFile('sfx_md_deep.wav')} volume={0.22} /></Sequence>
@@ -281,14 +318,14 @@ export const MarianaDive: React.FC = () => {
             <linearGradient id="mdSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0284c7" /><stop offset="100%" stopColor="#bae6fd" /></linearGradient>
             <linearGradient id="md40" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#06b6d4" /><stop offset="100%" stopColor="#0284c7" /></linearGradient>
             <linearGradient id="md332" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0369a1" /><stop offset="100%" stopColor="#1e3a8a" /></linearGradient>
-            <linearGradient id="md1000" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0f172a" /><stop offset="100%" stopColor="#020617" /></linearGradient>
+            <linearGradient id="md1000" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#122b49" /><stop offset="100%" stopColor="#050e1c" /></linearGradient>
             <linearGradient id="md3800" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#020617" /><stop offset="100%" stopColor="#090d1f" /></linearGradient>
             <linearGradient id="md11k" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#020617" /><stop offset="100%" stopColor="#000000" /></linearGradient>
           </defs>
           <MarianaStageBg stage={stage} frame={frame} localF={localF} anglerT={anglerT} crushT={crushT} />
-          <UdinDive2D x={udinX} y={udinY} mode={udinMode} frame={frame} crushT={crushT} diveRot={diveRot} />
+          {!hideUdin && <UdinDive2D x={udinX} y={udinY} mode={udinMode} frame={frame} crushT={crushT} diveRot={diveRot} />}
           {stage === 'surface' && (<g transform={`translate(135, ${198 + boatBob})`}><polygon points="-34,0 34,0 24,14 -24,14" fill="#ef4444" stroke="#0f172a" strokeWidth="1.8" /><rect x="-28" y="-3" width="56" height="4.5" fill="#f8fafc" stroke="#0f172a" strokeWidth="1.3" /><path d="M-36,12 Q-18,9 0,12 T36,12" fill="none" stroke="#bae6fd" strokeWidth="2.2" opacity="0.85" /></g>)}
-          {isSplash && (<g opacity={interpolate(frame, [t40 - 4, t40], [1, 0.3], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}>{[-18, -9, 0, 9, 18].map((sx, i) => (<circle key={i} cx={187 + sx} cy={198 - (frame - (t40 - 4)) * 5 - (i % 2) * 4} r={3.6 - (i % 2)} fill="#e0f2fe" />))}</g>)}
+          {isSplash && (<g opacity={interpolate(frame, [t40 - 6, t40], [1, 0.2], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}><ellipse cx="187" cy="202" rx={8 + (frame - (t40 - 6)) * 4.5} ry="4" fill="#e0f2fe" opacity="0.85" />{[-22, -13, -5, 4, 13, 22].map((sx, i) => (<circle key={i} cx={187 + sx} cy={198 - (frame - (t40 - 6)) * 5.2 - (i % 3) * 4} r={3.8 - (i % 2)} fill="#e0f2fe" />))}</g>)}
           {stage === 'z40' && localF < 12 && (<g opacity={1 - localF / 12}>{[-22, -10, 4, 16, 26].map((bx, i) => (<circle key={i} cx={135 + bx} cy={180 - localF * 5 - (i % 3) * 8} r={2.2 + (i % 2) * 1.4} fill="none" stroke="#e0f2fe" strokeWidth="1.2" />))}</g>)}
           {stage !== 'back' && (
             <g transform="translate(250, 102)">

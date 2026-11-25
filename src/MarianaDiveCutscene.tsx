@@ -53,6 +53,15 @@ export const CloseUpUdinMariana: React.FC<{ frame: number; localFrame: number }>
         </g>
         <ellipse cx="42" cy="248" rx="7" ry="4" fill="#f9a8d4" stroke="#0f172a" strokeWidth="1.2" />
         <ellipse cx="206" cy="212" rx="6" ry="3.5" fill="#fef08a" stroke="#0f172a" strokeWidth="1.2" />
+        <g transform="translate(52, 210)">
+          <ellipse cx="0" cy="11" rx="10" ry="3" fill="rgba(15,23,42,0.22)" />
+          <circle cx="0" cy="0" r="10.5" fill="#ffffff" stroke="#0f172a" strokeWidth="1.4" />
+          <path d="M0,-10.5 A10.5,10.5 0 0,1 10.5,0 L0,0 Z" fill="#ef4444" />
+          <path d="M0,10.5 A10.5,10.5 0 0,1 -10.5,0 L0,0 Z" fill="#38bdf8" />
+          <circle cx="0" cy="0" r="2.5" fill="#fde047" stroke="#0f172a" strokeWidth="1" />
+        </g>
+        <path d="M196,268 Q206,258 216,268 L206,274 Z" fill="#f9a8d4" stroke="#0f172a" strokeWidth="1.2" />
+        {[[26,228],[78,266],[168,256],[220,236],[148,284],[60,290]].map(([sx,sy],i)=>(<circle key={i} cx={sx} cy={sy} r="1.4" fill="#d97706" opacity="0.45" />))}
         <g transform={`translate(${108 + shiver}, ${232 + bounce * 1.3})`}>
           <ellipse cx="6" cy="14" rx="54" ry="12" fill="#0284c7" opacity="0.35" />
           <ellipse cx="4" cy="10" rx="36" ry="8" fill="rgba(15,23,42,0.28)" />
