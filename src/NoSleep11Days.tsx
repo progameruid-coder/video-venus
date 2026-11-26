@@ -20,11 +20,11 @@ const UdinSleep2D: React.FC<{ x: number; y: number; mode: SleepMode; frame: numb
   const rotPy = mode === 'shut' && fallT > 0 ? 0 : 14;
   const shiv = mode === 'panic' || mode === 'angry' ? Math.sin(frame * 1.9) * 1.6 : 0;
   const bob = jolt ? -4 : mode === 'fresh' || mode === 'morning' ? Math.sin(frame * 0.2) * 1.1 : 0;
-  const skin = mode === 'panic' ? '#ddd6fe' : mode === 'angry' ? '#fca5a5' : mode === 'dizzy' ? '#dcfce7' : '#fed7aa';
+  const skin = mode === 'panic' ? '#ddd6fe' : mode === 'angry' ? '#fca5a5' : mode === 'dizzy' ? '#e7e5c3' : '#fed7aa';
   const tired = mode !== 'fresh' && mode !== 'morning';
   const closed = (mode === 'micro' && nod > 0.45) || (mode === 'shut' && fallT > 0.25) || (mode === 'fresh' && frame % 85 > 80);
-  const armL = mode === 'panic' || mode === 'dizzy' || mode === 'angry' ? 132 : mode === 'fresh' ? 14 : mode === 'morning' ? 16 + Math.sin(frame * 0.15) * 6 : 12;
-  const armR = mode === 'panic' || mode === 'dizzy' || mode === 'angry' ? -132 : mode === 'fresh' ? -42 : mode === 'morning' ? -152 + Math.sin(frame * 0.35) * 14 : -12;
+  const armL = mode === 'panic' || mode === 'dizzy' || mode === 'angry' ? 132 : mode === 'fresh' ? 42 : mode === 'morning' ? 16 + Math.sin(frame * 0.15) * 6 : mode === 'shut' && fallT > 0.35 ? 0 : 12;
+  const armR = mode === 'panic' || mode === 'dizzy' || mode === 'angry' ? -132 : mode === 'fresh' ? -42 : mode === 'morning' ? -152 + Math.sin(frame * 0.35) * 14 : mode === 'shut' && fallT > 0.35 ? 0 : -12;
   return (
     <g transform={`translate(${x + shiv}, ${y + bob}) scale(1.95)`}>
       {fallT < 0.35 && <ellipse cx="0" cy="14" rx="11" ry="2.8" fill="rgba(15,23,42,0.32)" />}
@@ -35,7 +35,7 @@ const UdinSleep2D: React.FC<{ x: number; y: number; mode: SleepMode; frame: numb
         <g transform={`translate(-7, -6) rotate(${armL})`}>
           <rect x="-2.5" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1" />
           <rect x="-2.5" y="7" width="4.5" height="3.2" fill={skin} stroke="#0f172a" strokeWidth="0.85" />
-          {mode === 'fresh' && (<g transform="translate(-3.5, 8.8)"><path d="M0,1 C-2.2,1 -2.2,4.2 0,4.2" fill="none" stroke="#0f172a" strokeWidth="0.9" /><rect x="0" y="0" width="5.5" height="5.2" rx="0.8" fill="#f8fafc" stroke="#0f172a" strokeWidth="0.85" /><rect x="0.8" y="0.4" width="3.9" height="1.2" fill="#78350f" /><path d={`M1.8,-0.8 Q${2.6 + Math.sin(frame * 0.3) * 0.8},-2.5 1.8,-4`} fill="none" stroke="#e2e8f0" strokeWidth="0.7" opacity="0.8" /></g>)}
+          {mode === 'fresh' && (<g transform="translate(-2.5, 7.2) rotate(-42)"><path d="M0,1 C-2.2,1 -2.2,4.2 0,4.2" fill="none" stroke="#0f172a" strokeWidth="0.9" /><rect x="0" y="0" width="5.5" height="5.2" rx="0.8" fill="#f8fafc" stroke="#0f172a" strokeWidth="0.85" /><rect x="0.8" y="0.4" width="3.9" height="1.2" fill="#78350f" /><path d={`M1.8,-0.8 Q${2.6 + Math.sin(frame * 0.3) * 0.8},-2.5 1.8,-4`} fill="none" stroke="#e2e8f0" strokeWidth="0.7" opacity="0.8" /></g>)}
         </g>
         <g transform={`translate(7, -6) rotate(${armR})`}>
           <rect x="-2" y="0" width="4.5" height="8" fill="#dc2626" stroke="#0f172a" strokeWidth="1" />
@@ -142,7 +142,7 @@ const RoomStageBg: React.FC<{ stage: string; frame: number; shadowT: number; eye
       })()}
       {stage === 'd7' && (
         <g>
-          <polyline points={`24,186 58,186 68,${168 + Math.sin(frame * 0.9) * 10} 78,200 88,178 106,186 154,186 166,${168 + Math.cos(frame * 1.1) * 10} 178,200 190,186 238,186`} fill="none" stroke="#ef4444" strokeWidth="2.4" opacity="0.88" />
+          <polyline points={`24,186 58,186 68,${168 + Math.sin(frame * 0.9) * 10} 78,200 88,178 106,186 142,186 152,${174 + Math.cos(frame * 1.1) * 8} 162,200 174,186 238,186`} fill="none" stroke="#ef4444" strokeWidth="2.4" opacity="0.88" />
           <g transform={`translate(132, ${126 + Math.sin(frame * 0.4) * 2})`}>
             <path d="M0,-14 L12,-9 L10,5 L0,14 L-10,5 L-12,-9 Z" fill="#1e293b" stroke="#facc15" strokeWidth="2" />
             <polyline points="-2,-10 3,-2 -3,3 2,11" fill="none" stroke="#ef4444" strokeWidth="2" />
@@ -192,8 +192,8 @@ export const NoSleep11Days: React.FC = () => {
   const roomTilt = stage === 'd7' ? Math.sin(localF * 0.09) * 5.2 : 0;
   const shake = stage === 'h72' && eyesT > 0.2 ? Math.sin(frame * 2.2) * 1.8 : stage === 'd11' && fallT > 0 && fallT < 1 ? Math.sin(frame * 2.8) * 3.5 : 0;
   const udinMode: SleepMode = stage === 'start' ? 'fresh' : stage === 'h24' ? 'drunk' : stage === 'h48' ? 'micro' : stage === 'h72' ? (shadowT < 0.25 ? 'angry' : 'panic') : stage === 'd7' ? 'dizzy' : stage === 'd11' ? 'shut' : 'morning';
-  const udinX = stage === 'd11' ? interpolate(fallT, [0, 1], [142, 72]) : stage === 'h72' ? 118 : 142;
-  const udinY = stage === 'd11' ? interpolate(fallT, [0, 1], [268, 222]) : 268;
+  const udinX = stage === 'd11' ? interpolate(fallT, [0, 1], [142, 74]) : stage === 'h72' ? 118 : 142;
+  const udinY = stage === 'd11' ? interpolate(fallT, [0, 1], [268, 226]) : 268;
   const introAlpha = stage === 'start' ? interpolate(frame, [0, 8, t24 - 14, t24 - 4], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) : 0;
   const showChoices = stage === 'back' && !showCut && frame >= tChoice - 4;
   const choicePop = showChoices ? spring({ frame: Math.max(0, frame - (tChoice - 4)), fps, config: { damping: 11, stiffness: 210 } }) : 0;
@@ -228,8 +228,8 @@ export const NoSleep11Days: React.FC = () => {
             <UdinSleep2D x={udinX} y={udinY} mode={udinMode} frame={frame} nod={microBlink} jolt={jolt} fallT={fallT} />
             {stage === 'd11' && fallT > 0.72 && (
               <g transform="translate(6, 206)" opacity={interpolate(fallT, [0.72, 0.95], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}>
-                <path d="M50,8 Q84,3 114,10 L114,36 L50,36 Z" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" />
-                <path d="M50,8 Q54,22 50,36 L58,36 Q62,22 58,8 Z" fill="#93c5fd" stroke="#0f172a" strokeWidth="1.2" />
+                <path d="M48,4 Q84,-1 116,7 L116,36 L48,36 Z" fill="#2563eb" stroke="#0f172a" strokeWidth="1.5" />
+                <path d="M48,4 Q52,20 48,36 L56,36 Q60,20 56,4 Z" fill="#93c5fd" stroke="#0f172a" strokeWidth="1.2" />
               </g>
             )}
             {stage === 'd11' && fallT > 0.85 && [0, 1].map((i) => { const p = ((frame + i * 16) % 36) / 36; return <text key={i} x={38 + p * 16} y={198 - p * 38} fill="#38bdf8" fontSize={8 + p * 6} fontWeight="bold" fontFamily="monospace" opacity={Math.sin(p * Math.PI)}>Z</text>; })}
